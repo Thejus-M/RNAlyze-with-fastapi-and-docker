@@ -27,7 +27,7 @@ async def index(request: Request):
 async def submit_form(request: Request, text: default = ""):
       
     data = await request.form()
-    value = data.get("text") 
+    value = data.get("rna") 
     if value:
         model_path = os.path.join(os.getcwd(), 'model.pkl')
         model = pickle.load(open(model_path, 'rb'))
