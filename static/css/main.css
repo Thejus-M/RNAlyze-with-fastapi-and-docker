@@ -1,0 +1,13 @@
+.box{
+    padding: 30px;
+    margin: 30px;
+    border-radius: 30px;
+    text-align: center;
+    align-items: center;
+    border: 1px solid greenyellow;
+}
+.but{
+    text-align: center;
+    align-items: center;
+
+}
