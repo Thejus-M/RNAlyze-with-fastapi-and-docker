@@ -57,27 +57,27 @@
             <table>
                 <tr>
                     <th><span>Given Sequences</span> </th>
-                    <th><span>{{seq}}</span></th>
+                    <th><span>{{seq|truncate(20,True,'...')}}</span></th>
                 </tr>
                 <tr>
                     <td>Orf Length</td>
-                    <td>{{features.0.0}}</td>
+                    <td>{{features.0.0|round(2)}}</td>
                 </tr>
                 <tr>
                     <td>GC Content</td>
-                    <td>{{features.0.1}}</td>
+                    <td>{{features.0.1|round(2)}}</td>
                 </tr>
                 <tr>
                     <td>Transcript Length</td>
-                    <td>{{features.0.2}}</td>
+                    <td>{{features.0.2|round(2)}}</td>
                 </tr>
                 <tr>
                     <td>CPG Island</td>
-                    <td>{{features.0.3}}</td>
+                    <td>{{features.0.3|round(2)}}</td>
                 </tr>
                 <tr>
                     <td>Fickett Score</td>
-                    <td>{{features.0.4}}</td>
+                    <td>{{features.0.4|round(2)}}</td>
                 </tr>
             </table>
             <br><br>
