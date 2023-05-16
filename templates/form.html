@@ -20,11 +20,11 @@
             <span class="line line3"></span>
         </div>
         <ul class="menu-items">
-            <li><a href="#">Home</a></li>
+            <li><a href="{{ url_for('index')}}">Home</a></li>
             <li><a href="#">About</a></li>
-            <button><a href="#">Try Out</a></button>
+            <button><a href="{{ url_for('submit_form')}}">Try Out</a></button>
         </ul>
-        <a href="#">
+        <a href="{{ url_for('index')}}">
 
             <h1 class="logo">
 
