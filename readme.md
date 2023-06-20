@@ -82,7 +82,9 @@ To run the code in the provided repository, there are two methods: using Docker 
 
 3. Run the application using the following command:
 
-	`uvicorn src.main:app --reload` 
+	```
+	uvicorn src.main:app --reload
+	```
 
 These commands will start the FastAPI application and make it available on http://localhost:8080/ For more information on how to use FastAPI with Docker, you can refer to the official documentation[
 
