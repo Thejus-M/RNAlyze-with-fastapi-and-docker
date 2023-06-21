@@ -9,6 +9,7 @@ This repository contains the code and data for a project aimed at finding whethe
 - [ ] Create API calls
 - [ ] Display graphs for each input
 - [ ] Show history
+- [ ] upload fasta file option
 
 # Features 🔍
 -  ORF length
