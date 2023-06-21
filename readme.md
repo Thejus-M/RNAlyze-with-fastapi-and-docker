@@ -64,23 +64,31 @@ To run the code in the provided repository, there are two methods: using Docker 
 
 1. Pull the Docker image using the following command:
 
-	`docker pull iamfoss/rnalyze-server:v1`
+	```
+	docker pull iamfoss/rnalyze-server:v1
+ 	```
 
-2. Run the Docker container using the following command:
+3. Run the Docker container using the following command:
 
-	`docker run --name server -p 8080:80 iamfoss/rnalyze-server:v1`
+	```
+ 	docker run --name server -p 8080:80 iamfoss/rnalyze-server:v1
+	```
 
 #### From source
 
 1. Clone the repository using the following command:
 
-	`git clone https://github.com/Thejus-M/RNAlyze-with-fastapi-and-docker.git`
+	```
+	git clone https://github.com/Thejus-M/RNAlyze-with-fastapi-and-docker.git
+ 	```
 
-2. Install the required dependencies using the following command:
+3. Install the required dependencies using the following command:
 
-	`pip install -r requirement.txt`
+	```
+ 	pip install -r requirement.txt
+	```
 
-3. Run the application using the following command:
+4. Run the application using the following command:
 
 	```
 	uvicorn src.main:app --reload
