@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>atcg.Bio</title>
+    <link rel="stylesheet" href="/static/css/navbar.css">
+    <link rel="stylesheet" href="/static/css/footer.css">
+    <link rel="stylesheet" href="/static/css/home.css">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/logreg.css">
+    <link rel="icon" href="/static/img/logo.png" type="image/icon type">
+        
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container container">
+            <input type="checkbox" name="" id="" />
+            <div class="hamburger-lines">
+                <span class="line line1"></span>
+                <span class="line line2"></span>
+                <span class="line line3"></span>
+            </div>
+            <ul class="menu-items">
+                <li><a href="{{ url_for('index')}}">Home</a></li>
+                <li><a href="#">About</a></li>
+                <button><a href="{{ url_for('submit_form')}}">Try Out</a></button>
+            </ul>
+            <a href="#">
+    
+                <h1 class="logo">
+    
+                    <img src="/static/img/logo.png" alt="Logo">
+                    <img src="/static/img/name.png" alt="logo-name">
+                </h1>
+            </a>
+        </div>
+    </nav>
+
+
+    <div class="contents">  
+
+        <br><br>
+        <br><br>
+        <div class="main">  	
+            {% if message %}
+              <li>{{message}}</li>
+            {% endif  %}
+            <input type="checkbox" id="chk" aria-hidden="true">
+    
+                <div class="signup">
+                    <form method="post" action="/register" name="signup">
+                        <label for="chk" aria-hidden="true">Sign up</label>
+                        <!-- <input type="text" name="username" placeholder="User name" required=""> -->
+                        <input type="email" name="email" placeholder="Email" required="">
+                        <input type="password" name="pswd" placeholder="Password" required="">
+                        <input type="password" name="confirmpswd" placeholder="Confirm Password" >
+                        <button class="btn">Sign up</button>
+                    </form>
+                </div>
+    
+                <div class="login">
+                    <form method="post">
+                        <label for="chk" aria-hidden="true">Login</label>
+                        <input type="email" name="email" placeholder="Email" required="">
+                        <input type="password" name="pswd" placeholder="Password" required="">
+                        <button class="btn1">Login</button>
+                    </form>
+                </div>
+        </div>
+        
+    </div>
+    <div class="">
+
+    </div>
+    
+    <footer>
+        <div class="bottom">
+        </div>
+    </footer>
+</body>
+</html>
