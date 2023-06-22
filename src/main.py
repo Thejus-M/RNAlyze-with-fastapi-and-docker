@@ -5,7 +5,7 @@ from . import crud, models,database, schemas
 from .database import SessionLocal, engine
 from .schemas import UserCreate
 
-import crud
+# import crud
 import os
 import pickle
 import string
@@ -20,7 +20,7 @@ from fastapi.templating import Jinja2Templates
 # from schemas.users import UserCreate
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-from webapps.users.forms import UserCreateForm
+# from webapps.users.forms import UserCreateForm
 
 from .features import calculate_features
 
@@ -44,56 +44,23 @@ def get_db():
 
 
 
-@app.route("/register", methods=["GET", "POST"])
+@app.post("/register")
 async def register(request: Request, db: Session = Depends(get_db)):
     if request.method == "POST":
         data = await request.form()
         email = data.get("email")
-        password = data.get("pswd")
+        password = data.get("pswd")        
+
         user = models.User(email=email, hashed_password=password)
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-        return templates.TemplateResponse("logreg.html", {"request": request, "user": data})
+        crud.create_user(db=db, user=user)
+
+        return templates.TemplateResponse("logreg.html", {"request": request, "user": [data,email,password]})
         
-    else:
-        return templates.TemplateResponse("register.html", {"request": request})
 
-# @app.route("/register",methods=["GET","POST"])
-# async def register(request: Request, db: Session = Depends(get_db)):
-#     # form = UserCreateForm(request)
+@app.get("/register")
+async def register(request: Request, db: Session = Depends(get_db)):
+        return templates.TemplateResponse("logreg.html", {"request": request})
 
-#     data = await request.form()
-#     email=data.get("email")
-#     password=data.get("pswd")
-
-#     return templates.TemplateResponse("logreg.html",{"request":request,"user":data})
-
-
-# @app.post('/register')
-# def create_user(request:UserCreate, db: Session = Depends(get_db)):
-# 	# hashed_pass = request.password
-#     print(request)
-#     user_object = dict(request)
-#     print(user_object,user_id)
-#     # user_object["password"] = hashed_pass
-#     user_id = db["users"].insert(user_object)
-#     return {"res":"created"}
-
-# @app.post("/register", response_class=HTMLResponse)
-# async def create_user(request: Request, db: Session = Depends(get_db)):
-#     db_user=await request.form()
-#     user = crud.get_user_by_email(db, email=db_user.get("email"))
-#     if user:
-#         return templates.TemplateResponse("register.html", {"request": request, "message": "Username already exists."})
-
-#     if db_user:
-#         # raise HTTPException(status_code=400, detail="Email already registered")
-#         crud.create_user(db=db, user=user)
-#     print(db_user,user)
-#     user = schemas.UserCreate(email=db_user.get("email"), password=db_user.get("pswd"))
-#     crud.create_user(db, {db_user.get("email"),db_user.get("pswd")})
-#     return templates.TemplateResponse("register.html", {"request": request, "message": "Account created successfully."})
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -155,4 +122,4 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_user(db=db, user=user)
+    return crud.create_user_api(db=db, user=user)

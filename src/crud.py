@@ -15,12 +15,20 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).offset(skip).limit(limit).all()
 
 
-def create_user(db: Session, user: schemas.UserCreate):
+def create_user_api(db: Session, user: schemas.UserCreate):
     if user:
         fake_hashed_password = user.password + "-notreallyhashed"
     else:
         fake_hashed_password='nopassword set'
     db_user = models.User(email=user.email, hashed_password=fake_hashed_password)
+    print(db_user,user.email,fake_hashed_password)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+def create_user(db: Session, user: models.User):
+    db_user = models.User(email=user.email, hashed_password=user.hashed_password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
