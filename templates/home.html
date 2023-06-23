@@ -54,7 +54,13 @@
                 <button>Try Now</button>
             </a>
         </div>
-        
+        <div class="">
+            {% if logged_in %}
+        <p>Welcome, you are logged in! {{logged_in}}</p>
+        {% else %}
+        <p>Please log in to access this page.</p>
+        {% endif %}
+        </div>
     </div>
     
     <footer>
