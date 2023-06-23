@@ -1,5 +1,10 @@
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException,Response
+# from h11 import Response
 from sqlalchemy.orm import Session
+# from fastapi_sessions import SessionManager, SessionBackend, EncryptedCookieBackend
+
+# from fastapi.middleware.session import SessionMiddleware
+from jose import jwt
 
 from . import crud, models,database, schemas
 from .database import SessionLocal, engine
@@ -11,6 +16,7 @@ import pickle
 import string
 from email.policy import default
 
+from fastapi.responses import RedirectResponse
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -28,6 +34,7 @@ models.Base.metadata.create_all(bind=engine)
 
 
 app = FastAPI()
+# app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
 
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -42,20 +49,41 @@ def get_db():
     finally:
         db.close()
 
-
+def get_session(request: Request):
+    return request.session
 
 @app.post("/register")
-async def register(request: Request, db: Session = Depends(get_db)):
+async def register(request: Request,response:Response, db: Session = Depends(get_db)):
+    error=[]
     if request.method == "POST":
         data = await request.form()
         email = data.get("email")
-        password = data.get("pswd")        
-
+        password = data.get("pswd")     
+        confirm_pass= data.get("confirmpswd")   
         user = models.User(email=email, hashed_password=password)
-        crud.create_user(db=db, user=user)
+        if confirm_pass:
+            # registeration
+            crud.create_user(db=db, user=user)
+            return templates.TemplateResponse("logreg.html", {"request": request, "user": [data,email,password]})
+        else:
+            # login
+            try:
+                user=db.query(models.User).filter(models.User.email==email).first()
+                if user is None:
+                    error.append("Email does not exists")
+                    return templates.TemplateResponse('logreg.html',{"request":request,"error":error})
+                else:
+                    if password==user.hashed_password:
+                        data = {"sub":email}
+                        jwt_token = jwt.encode(data,"werty","HS256")
+                        response = templates.TemplateResponse('home.html',{"request":request,"error":error,"val":"Success"})
+                        response.set_cookie(key="access_token",value=f"Bearer {jwt_token}",httponly=True)
+                        return response
+            except:  # noqa: E722
+                error.append("Unexpected error!!!")
+                return templates.TemplateResponse('logreg.html',{"request":request,"error":error})
 
-        return templates.TemplateResponse("logreg.html", {"request": request, "user": [data,email,password]})
-        
+
 
 @app.get("/register")
 async def register(request: Request, db: Session = Depends(get_db)):
@@ -63,30 +91,31 @@ async def register(request: Request, db: Session = Depends(get_db)):
 
 
 
+@app.get("/logout")
+async def logout(response: Response):
+    response.delete_cookie("access_token")
+    return {"message": "Logged out successfully"}
+
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-    return templates.TemplateResponse("home.html", {"request": request})
+    access_token = request.cookies.get("access_token")
+
+    if access_token:
+        try:
+            decoded_token = jwt.decode(access_token.split("Bearer ")[1], "werty", algorithms=["HS256"])
+            email = decoded_token.get("sub")
+            # Perform additional checks or actions based on the email or other token data
+
+            # User is logged in, show the home page
+            return templates.TemplateResponse("home.html", {"request": request, "logged_in": [True,email]})
+        except jwt.JWTError:
+            # Invalid token, user is not logged in
+            return templates.TemplateResponse("home.html", {"request": request, "logged_in": False})
+
+    # No access token found, user is not logged in
+    return templates.TemplateResponse("home.html", {"request": request, "logged_in": False})
 
 
-
-
-@app.route("/login", methods=["GET", "POST"])
-async def create_user(request: Request):
-    data=await request.form()
-    if data:
-        username=data.get("username")
-        if username:
-            data='signup'
-            # email=data.get("email")
-            # pas=data.get('pswd')
-            # db_user = crud.get_user_by_email( email=email)
-            # if db_user:
-            #     raise HTTPException(status_code=400, detail="Email already registered")
-            # return crud.create_user(db=db, user={email,pas})
-
-        else:
-            data="Login"
-    return templates.TemplateResponse("logreg.html", {"request": request,'f1': data})
 
 
 # ML model  
