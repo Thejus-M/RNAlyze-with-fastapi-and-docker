@@ -1,35 +1,24 @@
-from unittest import result
 from fastapi import Depends, FastAPI, HTTPException,Response
-# from h11 import Response
+from jose import JWTError
 from sqlalchemy.orm import Session
-# from fastapi_sessions import SessionManager, SessionBackend, EncryptedCookieBackend
 
-# from fastapi.middleware.session import SessionMiddleware
-from jose import jwt
-
-from . import crud, models,database, schemas
+from . import crud, models, schemas
 from .database import SessionLocal, engine
-from .schemas import UserCreate
-import secrets
 
 
-# import crud
 import os
 import pickle
 import string
-from email.policy import default
 
 from fastapi.responses import RedirectResponse
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI,  Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 
-# from schemas.users import UserCreate
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-# from webapps.users.forms import UserCreateForm
 
 from .features import calculate_features
 
@@ -37,7 +26,6 @@ models.Base.metadata.create_all(bind=engine)
 
 PASSWORD = "c716d7f65958fc43f32642b3f42b761de6"
 app = FastAPI()
-# app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
 
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -79,7 +67,7 @@ async def register(request: Request,response:Response, db: Session = Depends(get
             else:
                 if password==user.hashed_password:
                     data = {"sub":email}
-                    jwt_token = jwt.encode(data,PASSWORD,algorithm="HS256")
+                    jwt_token = JWTError.encode(data,PASSWORD,algorithm="HS256")
                     success.append("Login Successfully")
                     reply={"request":request,"error":error,"success":success}
                     response = RedirectResponse(url="/")

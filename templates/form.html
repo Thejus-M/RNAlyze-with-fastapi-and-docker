@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/static/css/navbar.css">
     <link rel="stylesheet" href="/static/css/main.css">
     <link rel="stylesheet" href="/static/css/footer.css">
+    <link rel="stylesheet" href="/static/css/message.css">
     <link rel="icon" href="/static/img/logo.png" type="image/icon type">
 </head>
 <body> 
@@ -39,16 +40,29 @@
     </div>
 </nav>
 
-
-
-
-
 <br><br><br><br><br><br>
+
+<div class="message">
+    {% if error %}
+    
+      <label>
+        <input type="checkbox" class="alertCheckbox" autocomplete="off" />
+        <div class="alert error">
+          <span class="alertClose">X</span>
+          <span class="alertText">{{error}}
+              <br class="clear"/></span>
+        </div>
+      </label>
+    {% endif %}
+</div>
+
+<br><br>
+
 <div class="container">
 
   <h1>Rna sequencer</h1><br>
   <form action="" method="post">
-    <input type="text" name="name" placeholder="Name (optional)">
+    <textarea type="text" name="name" placeholder="Name (optional)"></textarea>
     <textarea name="desc" id="" cols="30" rows="2" placeholder="Enter the Description (optional)"></textarea>
     <textarea name="rna" id="" 
     cols="30" rows="10" placeholder="Enter your Rna"></textarea>
