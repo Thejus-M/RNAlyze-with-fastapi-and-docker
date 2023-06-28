@@ -178,7 +178,15 @@ async def register_form(request: Request):
 async def submit_form(request: Request, db: Session = Depends(get_db)):
       
     data = await request.form()
-    value = data.get("rna") 
+    value = data.get("rna").upper()
+    if value:
+        set_value = set(value)
+        rna_seq_poss = {'A','T','G','C'}
+        for s in set_value:
+            if s not in rna_seq_poss:
+                return templates.TemplateResponse("form.html", {"request": request,"error": "Should only use A,C,T,G"})
+
+
     name = data.get("name")
     desc = data.get("desc")
     decoded_token=None
