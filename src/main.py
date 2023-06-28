@@ -99,10 +99,7 @@ async def register(request: Request):
     access_token = request.cookies.get("access_token")
 
     if access_token:
-        decoded_token = jwt.decode(access_token.split("Bearer ")[1],PASSWORD, algorithms=["HS256"])
-        if decoded_token:
-            reply= {"request": request}
-            return templates.TemplateResponse("home.html",reply)
+        return RedirectResponse(url="/", status_code=303)
     return templates.TemplateResponse("logreg.html", {"request": request})
 
 
