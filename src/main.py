@@ -10,6 +10,8 @@ from jose import jwt
 from . import crud, models,database, schemas
 from .database import SessionLocal, engine
 from .schemas import UserCreate
+import secrets
+
 
 # import crud
 import os
@@ -33,7 +35,7 @@ from .features import calculate_features
 
 models.Base.metadata.create_all(bind=engine)
 
-PASSWORD="dtrytcfghyubhjoi"
+PASSWORD= secrets.token_hex(17)
 app = FastAPI()
 # app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
 
@@ -57,39 +59,38 @@ def get_session(request: Request):
 async def register(request: Request,response:Response, db: Session = Depends(get_db)):
     error=["wer"]
     success=[]
-    if request.method == "POST":
-        data = await request.form()
-        email = data.get("email")
-        password = data.get("pswd")     
-        confirm_pass= data.get("confirmpswd")   
-        user = models.User(email=email, hashed_password=password)
-        if confirm_pass:
-            # registration
-            crud.create_user(db=db, user=user)
-            return templates.TemplateResponse("logreg.html", {"request": request, "user": [data,email,password]})
-        else:
-            # login
-            try:
-                user=db.query(models.User).filter(models.User.email==email).first()
-                if user is None:
-                    error.append("Email does not exists")
-                    reply={"request":request,"error":error}
-                    return templates.TemplateResponse('logreg.html',reply)
-                else:
-                    if password==user.hashed_password:
-                        data = {"sub":email}
-                        jwt_token = jwt.encode(data,PASSWORD,algorithm="HS256")
-                        success.append("Login Successfully")
-                        reply={"request":request,"error":error,"success":success}
-                        response = RedirectResponse(url="/", )
-                        response.set_cookie(key="access_token",value=f"Bearer {jwt_token}",httponly=True)
-                        return response
-                    else:
-                        error.append("Invalid password")
-            except:  
-                error.append("Unexpected error!!!")
+    data = await request.form()
+    email = data.get("email")
+    password = data.get("pswd")     
+    confirm_pass= data.get("confirmpswd")   
+    user = models.User(email=email, hashed_password=password)
+    if confirm_pass:
+        # registration
+        crud.create_user(db=db, user=user)
+        return templates.TemplateResponse("logreg.html", {"request": request, "user": [data,email,password]})
+    else:
+        # login
+        try:
+            user=db.query(models.User).filter(models.User.email==email).first()
+            if user is None:
+                error.append("Email does not exists")
                 reply={"request":request,"error":error}
                 return templates.TemplateResponse('logreg.html',reply)
+            else:
+                if password==user.hashed_password:
+                    data = {"sub":email}
+                    jwt_token = jwt.encode(data,PASSWORD,algorithm="HS256")
+                    success.append("Login Successfully")
+                    reply={"request":request,"error":error,"success":success}
+                    response = RedirectResponse(url="/")
+                    response.set_cookie(key="access_token",value=f"Bearer {jwt_token}",httponly=True)
+                    return response
+                else:
+                    error.append("Invalid password")
+        except:  
+            error.append("Unexpected error!!!")
+            reply={"request":request,"error":error}
+            return templates.TemplateResponse('logreg.html',reply)
 
 
 
@@ -128,6 +129,11 @@ async def index(request: Request):
     reply= {"request": request, "logged_in": False}
     return templates.TemplateResponse("home.html", reply)
 
+@app.post("/")
+async def index_post(request: Request):
+    return RedirectResponse(url="/", status_code=303)
+
+
 @app.get("/detail/{user_id}")
 async def details(request: Request,user_id: int,  db: Session = Depends(get_db)):
         access_token = request.cookies.get("access_token")
@@ -140,7 +146,6 @@ async def details(request: Request,user_id: int,  db: Session = Depends(get_db))
             logged_in=True
             history_detail = db.query(models.Sequences).filter(models.Sequences.id == user_id)
             value=history_detail[0].result.split(",")
-            print(value)
         reply={"request": request,"history":history_detail,"logged_in":logged_in,"value":value}
         return templates.TemplateResponse("details.html", reply)
     
