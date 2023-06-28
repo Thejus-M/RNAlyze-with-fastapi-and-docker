@@ -1,25 +1,17 @@
-from fastapi import Depends, FastAPI, HTTPException,Response
-from jose import JWTError
-from sqlalchemy.orm import Session
-
-from . import crud, models, schemas
-from .database import SessionLocal, engine
-
-
 import os
 import pickle
 import string
 
-from fastapi.responses import RedirectResponse
-from fastapi import FastAPI,  Request
-from fastapi.responses import HTMLResponse
+from fastapi import Depends, FastAPI, HTTPException, Request, Response
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-
-
-from sqlalchemy.orm import Session
+from jose import jwt
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 
+from . import crud, models, schemas
+from .database import SessionLocal, engine
 from .features import calculate_features
 
 models.Base.metadata.create_all(bind=engine)
@@ -67,7 +59,7 @@ async def register(request: Request,response:Response, db: Session = Depends(get
             else:
                 if password==user.hashed_password:
                     data = {"sub":email}
-                    jwt_token = JWTError.encode(data,PASSWORD,algorithm="HS256")
+                    jwt_token = jwt.encode(data,PASSWORD,algorithm="HS256")
                     success.append("Login Successfully")
                     reply={"request":request,"error":error,"success":success}
                     response = RedirectResponse(url="/")
