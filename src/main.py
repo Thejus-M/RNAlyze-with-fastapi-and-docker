@@ -35,7 +35,7 @@ from .features import calculate_features
 
 models.Base.metadata.create_all(bind=engine)
 
-PASSWORD= secrets.token_hex(17)
+PASSWORD = "c716d7f65958fc43f32642b3f42b761de6"
 app = FastAPI()
 # app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
 
@@ -96,7 +96,11 @@ async def register(request: Request,response:Response, db: Session = Depends(get
 
 @app.get("/register")
 async def register(request: Request):
-        return templates.TemplateResponse("logreg.html", {"request": request})
+    access_token = request.cookies.get("access_token")
+
+    if access_token:
+        return RedirectResponse(url="/", status_code=303)
+    return templates.TemplateResponse("logreg.html", {"request": request})
 
 
 
@@ -174,7 +178,15 @@ async def register_form(request: Request):
 async def submit_form(request: Request, db: Session = Depends(get_db)):
       
     data = await request.form()
-    value = data.get("rna") 
+    value = data.get("rna").upper()
+    if value:
+        set_value = set(value)
+        rna_seq_poss = {'A','T','G','C'}
+        for s in set_value:
+            if s not in rna_seq_poss:
+                return templates.TemplateResponse("form.html", {"request": request,"error": "Should only use A,C,T,G"})
+
+
     name = data.get("name")
     desc = data.get("desc")
     decoded_token=None
