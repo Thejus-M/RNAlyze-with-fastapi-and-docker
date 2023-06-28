@@ -35,7 +35,7 @@ from .features import calculate_features
 
 models.Base.metadata.create_all(bind=engine)
 
-PASSWORD= secrets.token_hex(17)
+PASSWORD = "c716d7f65958fc43f32642b3f42b761de6"
 app = FastAPI()
 # app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
 
