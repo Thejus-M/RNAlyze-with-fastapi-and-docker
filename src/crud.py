@@ -29,7 +29,6 @@ def create_user_api(db: Session, user: schemas.UserCreate):
     else:
         fake_hashed_password='nopassword set'
     db_user = models.User(email=user.email, hashed_password=fake_hashed_password)
-    print(db_user,user.email,fake_hashed_password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -41,6 +40,13 @@ def create_user(db: Session, user: models.User):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+def create_seq(db: Session, seq: models.Sequences):
+    db_seq = models.Sequences(name=seq.name,seq=seq.seq,description=seq.description,result=seq.result,owner_id=seq.owner_id)
+    db.add(db_seq)
+    db.commit()
+    db.refresh(db_seq)
+    return db_seq
 
 def is_user_logged_in(session: Session):
     return "user_id" in session
