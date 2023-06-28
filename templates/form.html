@@ -22,6 +22,10 @@
         <ul class="menu-items">
             <li><a href="{{ url_for('index')}}">Home</a></li>
             <li><a href="#">About</a></li>
+            {% if logged_in %}
+            <li><a href="{{ url_for('logout')}}">Logout</a></li>
+            <li><a href="{{ url_for('his')}}">History</a></li>
+            {% endif %}
             <button><a href="{{ url_for('submit_form')}}">Try Out</a></button>
         </ul>
         <a href="{{ url_for('index')}}">
@@ -29,6 +33,7 @@
             <h1 class="logo">
 
                 <img src="/static/img/logo.png" alt="Logo">
+                <img src="/static/img/name.png" alt="logo-name">
             </h1>
         </a>
     </div>
@@ -43,8 +48,10 @@
 
   <h1>Rna sequencer</h1><br>
   <form action="" method="post">
-      <textarea name="rna" id="" 
-      cols="30" rows="10" placeholder="Enter your Rna"></textarea>
+    <input type="text" name="name" placeholder="Name (optional)">
+    <textarea name="desc" id="" cols="30" rows="2" placeholder="Enter the Description (optional)"></textarea>
+    <textarea name="rna" id="" 
+    cols="30" rows="10" placeholder="Enter your Rna"></textarea>
       <br><br>
       <button type="submit">Submit</button>
   </form>
@@ -96,6 +103,14 @@
                 <br><br>
             </div>
     </div>
+    {% if not logged_in %}
+    <div class="result">
+        <a href="{{ url_for('register')}}">
+            <button>Log In</button>
+        </a> <br>
+        To save history
+    </div>
+    {% endif %}
     {% endif %}
 </div>
 

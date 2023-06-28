@@ -1,3 +1,4 @@
+from unittest import result
 from fastapi import Depends, FastAPI, HTTPException,Response
 # from h11 import Response
 from sqlalchemy.orm import Session
@@ -32,7 +33,7 @@ from .features import calculate_features
 
 models.Base.metadata.create_all(bind=engine)
 
-
+PASSWORD="dtrytcfghyubhjoi"
 app = FastAPI()
 # app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
 
@@ -54,7 +55,8 @@ def get_session(request: Request):
 
 @app.post("/register")
 async def register(request: Request,response:Response, db: Session = Depends(get_db)):
-    error=[]
+    error=["wer"]
+    success=[]
     if request.method == "POST":
         data = await request.form()
         email = data.get("email")
@@ -62,7 +64,7 @@ async def register(request: Request,response:Response, db: Session = Depends(get
         confirm_pass= data.get("confirmpswd")   
         user = models.User(email=email, hashed_password=password)
         if confirm_pass:
-            # registeration
+            # registration
             crud.create_user(db=db, user=user)
             return templates.TemplateResponse("logreg.html", {"request": request, "user": [data,email,password]})
         else:
@@ -71,30 +73,39 @@ async def register(request: Request,response:Response, db: Session = Depends(get
                 user=db.query(models.User).filter(models.User.email==email).first()
                 if user is None:
                     error.append("Email does not exists")
-                    return templates.TemplateResponse('logreg.html',{"request":request,"error":error})
+                    reply={"request":request,"error":error}
+                    return templates.TemplateResponse('logreg.html',reply)
                 else:
                     if password==user.hashed_password:
                         data = {"sub":email}
-                        jwt_token = jwt.encode(data,"werty","HS256")
-                        response = templates.TemplateResponse('home.html',{"request":request,"error":error,"val":"Success"})
+                        jwt_token = jwt.encode(data,PASSWORD,algorithm="HS256")
+                        success.append("Login Successfully")
+                        reply={"request":request,"error":error,"success":success}
+                        response = RedirectResponse(url="/", )
                         response.set_cookie(key="access_token",value=f"Bearer {jwt_token}",httponly=True)
                         return response
-            except:  # noqa: E722
+                    else:
+                        error.append("Invalid password")
+            except:  
                 error.append("Unexpected error!!!")
-                return templates.TemplateResponse('logreg.html',{"request":request,"error":error})
+                reply={"request":request,"error":error}
+                return templates.TemplateResponse('logreg.html',reply)
 
 
 
 @app.get("/register")
-async def register(request: Request, db: Session = Depends(get_db)):
+async def register(request: Request):
         return templates.TemplateResponse("logreg.html", {"request": request})
 
 
 
 @app.get("/logout")
-async def logout(response: Response):
+async def logout(request: Request,response: Response):
+    response = RedirectResponse(url="/")
     response.delete_cookie("access_token")
-    return {"message": "Logged out successfully"}
+    return response
+    # return {"response":response}
+    # return templates.TemplateResponse("home.html", {"request": request})
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
@@ -102,43 +113,94 @@ async def index(request: Request):
 
     if access_token:
         try:
-            decoded_token = jwt.decode(access_token.split("Bearer ")[1], "werty", algorithms=["HS256"])
+            decoded_token = jwt.decode(access_token.split("Bearer ")[1],PASSWORD, algorithms=["HS256"])
             email = decoded_token.get("sub")
             # Perform additional checks or actions based on the email or other token data
 
             # User is logged in, show the home page
-            return templates.TemplateResponse("home.html", {"request": request, "logged_in": [True,email]})
-        except jwt.JWTError:
+            reply= {"request": request, "logged_in": [True,email]}
+        except:
             # Invalid token, user is not logged in
-            return templates.TemplateResponse("home.html", {"request": request, "logged_in": False})
+            reply= {"request": request, "logged_in": False}
+        return templates.TemplateResponse("home.html",reply)
 
     # No access token found, user is not logged in
-    return templates.TemplateResponse("home.html", {"request": request, "logged_in": False})
+    reply= {"request": request, "logged_in": False}
+    return templates.TemplateResponse("home.html", reply)
 
+@app.get("/detail/{user_id}")
+async def details(request: Request,user_id: int,  db: Session = Depends(get_db)):
+        access_token = request.cookies.get("access_token")
+        logged_in=False
+        history_detail=None
+        value=None
+        if access_token:
+            decoded_token = jwt.decode(access_token.split("Bearer ")[1], PASSWORD, algorithms=["HS256"])
+            email = decoded_token.get("sub")
+            logged_in=True
+            history_detail = db.query(models.Sequences).filter(models.Sequences.id == user_id)
+            value=history_detail[0].result.split(",")
+            print(value)
+        reply={"request": request,"history":history_detail,"logged_in":logged_in,"value":value}
+        return templates.TemplateResponse("details.html", reply)
+    
+
+@app.get("/history")
+async def his(request: Request, db: Session = Depends(get_db)):  
+        access_token = request.cookies.get("access_token")
+        history=None
+        logged_in=False
+        if access_token:
+            decoded_token = jwt.decode(access_token.split("Bearer ")[1], PASSWORD, algorithms=["HS256"])
+            email = decoded_token.get("sub")
+            history = db.query(models.Sequences).filter(models.Sequences.owner_id == email)
+            logged_in=True
+        reply={"request": request,"history":history,"logged_in":logged_in}
+        return templates.TemplateResponse("history.html", reply)
 
 
 
 # ML model  
+@app.get("/submit")
+async def register_form(request: Request): 
+        return templates.TemplateResponse("form.html", {"request": request})
 
-@app.route("/submit", methods=["GET", "POST"])
-async def submit_form(request: Request, text: default = ""):
+@app.post("/submit")
+async def submit_form(request: Request, db: Session = Depends(get_db)):
       
     data = await request.form()
     value = data.get("rna") 
+    name = data.get("name")
+    desc = data.get("desc")
+    decoded_token=None
+    email=None
+    logged_in=False
+    access_token = request.cookies.get("access_token")
+    if access_token:
+        decoded_token = jwt.decode(access_token.split("Bearer ")[1],PASSWORD, algorithms=["HS256"])
+        email = decoded_token.get("sub")
+        logged_in=True
     if value:
         model_path = os.path.join(os.getcwd(), 'model.pkl')
         model = pickle.load(open(model_path, 'rb'))
         seq=value.translate({ord(c): None for c in string.whitespace})
         features = calculate_features(seq)
         result=model.predict(features)
+        r=f"{features[0][0]},{features[0][1]},{features[0][2]},{features[0][3]},{features[0][4]},{result[0]}"
+        if decoded_token:
+            sequence = models.Sequences(name=name, seq=value,
+                                        description=desc,result=r,
+                                        owner_id=email)
+            crud.create_seq(db=db, seq=sequence)
     else:
         seq=''
         features=None
         result=None
 
 
-    d={"request": request,"text":value,'seq':seq,'features':features,'result':result}
-    return templates.TemplateResponse("form.html", d)
+    reply={"request": request,"text":value,'seq':seq,
+           'features':features,'result':result,"logged_in":logged_in}
+    return templates.TemplateResponse("form.html", reply)
 
 
 

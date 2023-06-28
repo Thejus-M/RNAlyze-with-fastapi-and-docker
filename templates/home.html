@@ -24,6 +24,10 @@
             <ul class="menu-items">
                 <li><a href="{{ url_for('index')}}">Home</a></li>
                 <li><a href="#">About</a></li>
+                {% if logged_in %}
+                <li><a href="{{ url_for('logout')}}">Logout</a></li>
+                <li><a href="{{ url_for('his')}}">History</a></li>
+                {% endif %}
                 <button><a href="{{ url_for('submit_form')}}">Try Out</a></button>
             </ul>
             <a href="#">
@@ -58,7 +62,7 @@
             {% if logged_in %}
         <p>Welcome, you are logged in! {{logged_in}}</p>
         {% else %}
-        <p>Please log in to access this page.</p>
+        <p>Please log in to access this page. i{{logged_in}}</p>
         {% endif %}
         </div>
     </div>

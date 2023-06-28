@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RNAlyze</title>
+    <link rel="stylesheet" href="/static/css/home.css">
+    <link rel="stylesheet" href="/static/css/navbar.css">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/footer.css">
+    <link rel="stylesheet" href="/static/css/message.css">
+    <link rel="icon" href="/static/img/logo.png" type="image/icon type">
+</head>
+<body> 
+
+<nav class="navbar">
+    <div class="navbar-container container">
+        <input type="checkbox" name="" id="" />
+        <div class="hamburger-lines">
+            <span class="line line1"></span>
+            <span class="line line2"></span>
+            <span class="line line3"></span>
+        </div>
+        <ul class="menu-items">
+            <li><a href="{{ url_for('index')}}">Home</a></li>
+            <li><a href="#">About</a></li>
+            {% if logged_in %}
+            <li><a href="{{ url_for('his')}}">History</a></li>
+            <li><a href="{{ url_for('logout')}}">Logout</a></li>
+            {% endif %}
+            <button><a href="{{ url_for('submit_form')}}">Try Out</a></button>
+        </ul>
+        <a href="{{ url_for('index')}}">
+
+            <h1 class="logo">
+
+                <img src="/static/img/logo.png" alt="Logo">
+                <img src="/static/img/name.png" alt="logo-name">
+            </h1>
+        </a>
+    </div>
+</nav>
+
+
+<div class="message">
+    {% for m in error %}
+
+
+    <div class="toast__container">
+        <div class="toast__cell">
+        <div class="toast toast--green">
+          <div class="toast__icon">
+            <svg version="1.1" class="toast__svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+        <g><g><path d="M504.502,75.496c-9.997-9.998-26.205-9.998-36.204,0L161.594,382.203L43.702,264.311c-9.997-9.998-26.205-9.997-36.204,0    c-9.998,9.997-9.998,26.205,0,36.203l135.994,135.992c9.994,9.997,26.214,9.99,36.204,0L504.502,111.7    C514.5,101.703,514.499,85.494,504.502,75.496z"></path>
+            </g></g>
+            </svg>
+          </div>
+          <div class="toast__content">
+            <p class="toast__type">Success</p>
+            <p class="toast__message">Anyone with access can view your invited visitors.</p>
+          </div>
+          <div class="toast__close">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.642 15.642" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 15.642 15.642">
+          <path fill-rule="evenodd" d="M8.882,7.821l6.541-6.541c0.293-0.293,0.293-0.768,0-1.061  c-0.293-0.293-0.768-0.293-1.061,0L7.821,6.76L1.28,0.22c-0.293-0.293-0.768-0.293-1.061,0c-0.293,0.293-0.293,0.768,0,1.061  l6.541,6.541L0.22,14.362c-0.293,0.293-0.293,0.768,0,1.061c0.147,0.146,0.338,0.22,0.53,0.22s0.384-0.073,0.53-0.22l6.541-6.541  l6.541,6.541c0.147,0.146,0.338,0.22,0.53,0.22c0.192,0,0.384-0.073,0.53-0.22c0.293-0.293,0.293-0.768,0-1.061L8.882,7.821z"></path>
+        </svg>
+          </div>
+        </div>
+        
+        
+        <div class="toast toast--blue add-margin">
+          <div class="toast__icon">
+        <svg version="1.1" class="toast__svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve">
+        <g>
+            <g id="info">
+                <g>
+                    <path  d="M10,16c1.105,0,2,0.895,2,2v8c0,1.105-0.895,2-2,2H8v4h16v-4h-1.992c-1.102,0-2-0.895-2-2L20,12H8     v4H10z"></path>
+                    <circle  cx="16" cy="4" r="4"></circle>
+                </g>
+            </g>
+        </g>
+        
+            </svg>
+          </div>
+          <div class="toast__content">
+            <p class="toast__type">Info</p>
+            <p class="toast__message">Anyone with access can view your invited visitors.</p>
+          </div>
+          <div class="toast__close">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.642 15.642" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 15.642 15.642">
+          <path fill-rule="evenodd" d="M8.882,7.821l6.541-6.541c0.293-0.293,0.293-0.768,0-1.061  c-0.293-0.293-0.768-0.293-1.061,0L7.821,6.76L1.28,0.22c-0.293-0.293-0.768-0.293-1.061,0c-0.293,0.293-0.293,0.768,0,1.061  l6.541,6.541L0.22,14.362c-0.293,0.293-0.293,0.768,0,1.061c0.147,0.146,0.338,0.22,0.53,0.22s0.384-0.073,0.53-0.22l6.541-6.541  l6.541,6.541c0.147,0.146,0.338,0.22,0.53,0.22c0.192,0,0.384-0.073,0.53-0.22c0.293-0.293,0.293-0.768,0-1.061L8.882,7.821z"></path>
+        </svg>
+          </div>
+        </div>
+        
+        <div class="toast toast--yellow add-margin">
+          <div class="toast__icon">
+        <svg version="1.1" class="toast__svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 301.691 301.691" style="enable-background:new 0 0 301.691 301.691;" xml:space="preserve">
+        <g>
+            <polygon points="119.151,0 129.6,218.406 172.06,218.406 182.54,0  "></polygon>
+            <rect x="130.563" y="261.168" width="40.525" height="40.523"></rect>
+        </g>
+            </svg>
+          </div>
+          <div class="toast__content">
+            <p class="toast__type">Success</p>
+            <p class="toast__message">Anyone with access can view your invited visitors.</p>
+          </div>
+          <div class="toast__close">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.642 15.642" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 15.642 15.642">
+          <path fill-rule="evenodd" d="M8.882,7.821l6.541-6.541c0.293-0.293,0.293-0.768,0-1.061  c-0.293-0.293-0.768-0.293-1.061,0L7.821,6.76L1.28,0.22c-0.293-0.293-0.768-0.293-1.061,0c-0.293,0.293-0.293,0.768,0,1.061  l6.541,6.541L0.22,14.362c-0.293,0.293-0.293,0.768,0,1.061c0.147,0.146,0.338,0.22,0.53,0.22s0.384-0.073,0.53-0.22l6.541-6.541  l6.541,6.541c0.147,0.146,0.338,0.22,0.53,0.22c0.192,0,0.384-0.073,0.53-0.22c0.293-0.293,0.293-0.768,0-1.061L8.882,7.821z"></path>
+        </svg>
+          </div>
+        </div>
+        </div>
+        </div>
+
+    {% endfor %}
+    
+</div>
+
+
+<br><br><br><br><br><br>
+<div class="container">
+    
+
+    {% if history %}
+    <div class="result">
+        <h1><u>Result</u></h1><br>
+
+        <h3>Seq</h3><br>
+        <textarea name="rna_seq" id="" 
+        cols="30" rows="10" placeholder="Enter your Rna" >{{history[0].seq}}</textarea>
+        <h2>
+            Result: {{value[5]}}
+            <br><br><br>
+            
+            <table>
+                <tr>
+                    <th><span>Given Sequences</span> </th>
+                    <th><span>Values</span></th>
+                </tr>
+                <tr>
+                    <td>Orf Length</td>
+                    <td>{{value[0]}}</td>
+                </tr>
+                <tr>
+                    <td>GC Content</td>
+                    <td>{{value[1]}}</td>
+                </tr>
+                <tr>
+                    <td>Transcript Length</td>
+                    <td>{{value[2]}}</td>
+                </tr>
+                <tr>
+                    <td>CPG Island</td>
+                    <td>{{value[3]}}</td>
+                </tr>
+                <tr>
+                    <td>Fickett Score</td>
+                    <td>{{value[4]}}</td>
+                </tr>
+            </table>
+            <br><br>
+    </div>
+    {% endif %}
+</div>
+
+
+
+
+
+<footer>
+    <div class="bottom">
+    </div>
+</footer>
+
+</body>
+</html>
