@@ -96,7 +96,14 @@ async def register(request: Request,response:Response, db: Session = Depends(get
 
 @app.get("/register")
 async def register(request: Request):
-        return templates.TemplateResponse("logreg.html", {"request": request})
+    access_token = request.cookies.get("access_token")
+
+    if access_token:
+        decoded_token = jwt.decode(access_token.split("Bearer ")[1],PASSWORD, algorithms=["HS256"])
+        if decoded_token:
+            reply= {"request": request}
+            return templates.TemplateResponse("home.html",reply)
+    return templates.TemplateResponse("logreg.html", {"request": request})
 
 
 
