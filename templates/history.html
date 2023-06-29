@@ -55,7 +55,7 @@
                     <th><span>Name</span> </th>
                     <th><span>Description</span> </th>
                     <th><span>Sequences</span> </th>
-                    <th><span>Details</span> </th>
+                    <th><span>Buttons</span> </th>
                 </tr>
                 {% for rows in history %}
                 <tr>
@@ -63,11 +63,18 @@
                     <td>{{rows.description}}</td>
                     <td>{{rows.seq|truncate(20,True,'...')}}</td>
                     <td>
+                        <br>
                         <a href="{{ url_for('details', user_id=rows.id) }}">
                         <button>
                                 Details
                         </button> 
-                        </a> 
+                        </a>
+                        <br>
+                        <a href="{{ url_for('delete_item', item_id=rows.id) }}">
+                        <button>
+                                Delete
+                        </button> 
+                        </a> <br>
                     </td>
                 </tr>
                 {% endfor %}

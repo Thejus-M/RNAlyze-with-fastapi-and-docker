@@ -1,43 +1,22 @@
-from unittest import result
-from fastapi import Depends, FastAPI, HTTPException,Response
-# from h11 import Response
-from sqlalchemy.orm import Session
-# from fastapi_sessions import SessionManager, SessionBackend, EncryptedCookieBackend
-
-# from fastapi.middleware.session import SessionMiddleware
-from jose import jwt
-
-from . import crud, models,database, schemas
-from .database import SessionLocal, engine
-from .schemas import UserCreate
-import secrets
-
-
-# import crud
 import os
 import pickle
 import string
-from email.policy import default
 
-from fastapi.responses import RedirectResponse
-from fastapi import FastAPI, Form, Request
-from fastapi.responses import HTMLResponse
+from fastapi import Depends, FastAPI, HTTPException, Request, Response
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-
-
-# from schemas.users import UserCreate
+from jose import jwt
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
-# from webapps.users.forms import UserCreateForm
 
+from . import crud, models, schemas
+from .database import SessionLocal, engine
 from .features import calculate_features
 
 models.Base.metadata.create_all(bind=engine)
 
 PASSWORD = "c716d7f65958fc43f32642b3f42b761de6"
 app = FastAPI()
-# app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
 
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -57,7 +36,7 @@ def get_session(request: Request):
 
 @app.post("/register")
 async def register(request: Request,response:Response, db: Session = Depends(get_db)):
-    error=["wer"]
+    error=[]
     success=[]
     data = await request.form()
     email = data.get("email")
@@ -66,18 +45,24 @@ async def register(request: Request,response:Response, db: Session = Depends(get
     user = models.User(email=email, hashed_password=password)
     if confirm_pass:
         # registration
+        if password!=confirm_pass:
+            return RedirectResponse('/register', status_code=303)
         crud.create_user(db=db, user=user)
         return templates.TemplateResponse("logreg.html", {"request": request, "user": [data,email,password]})
     else:
-        # login
+        # login/sign in
         try:
+            print("qwertyuiop")
             user=db.query(models.User).filter(models.User.email==email).first()
             if user is None:
                 error.append("Email does not exists")
+                print("Error user in none")
                 reply={"request":request,"error":error}
                 return templates.TemplateResponse('logreg.html',reply)
             else:
+                print("password")
                 if password==user.hashed_password:
+                    print(password)
                     data = {"sub":email}
                     jwt_token = jwt.encode(data,PASSWORD,algorithm="HS256")
                     success.append("Login Successfully")
@@ -88,6 +73,7 @@ async def register(request: Request,response:Response, db: Session = Depends(get
                 else:
                     error.append("Invalid password")
         except:  
+            print("jk")
             error.append("Unexpected error!!!")
             reply={"request":request,"error":error}
             return templates.TemplateResponse('logreg.html',reply)
@@ -95,7 +81,7 @@ async def register(request: Request,response:Response, db: Session = Depends(get
 
 
 @app.get("/register")
-async def register(request: Request):
+async def register_get(request: Request):
     access_token = request.cookies.get("access_token")
 
     if access_token:
@@ -109,8 +95,6 @@ async def logout(request: Request,response: Response):
     response = RedirectResponse(url="/")
     response.delete_cookie("access_token")
     return response
-    # return {"response":response}
-    # return templates.TemplateResponse("home.html", {"request": request})
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
@@ -137,6 +121,27 @@ async def index(request: Request):
 async def index_post(request: Request):
     return RedirectResponse(url="/", status_code=303)
 
+@app.get("/delete-his/{item_id}")
+async def delete_item(item_id: int, db: Session = Depends(get_db)):
+    item = db.query(models.Sequences).filter(models.Sequences.id == item_id).first()
+    if item:
+        db.delete(item)
+        db.commit()
+        return RedirectResponse(url='/history')
+    else:
+        return {"message": "Item not found"}
+
+@app.post("/detail/{item_id}")
+async def edit_item(request:Request,item_id: int, db: Session = Depends(get_db)):
+    item = db.query(models.Sequences).filter(models.Sequences.id == item_id).first()
+    data = await request.form()
+    if item and data:
+        item.name = data['name']
+        item.description = data['desc']
+        db.commit()
+        return {"message": "Item updated"}
+    else:
+        return {"message": "Item not found"}
 
 @app.get("/detail/{user_id}")
 async def details(request: Request,user_id: int,  db: Session = Depends(get_db)):
@@ -149,7 +154,8 @@ async def details(request: Request,user_id: int,  db: Session = Depends(get_db))
             email = decoded_token.get("sub")
             logged_in=True
             history_detail = db.query(models.Sequences).filter(models.Sequences.id == user_id)
-            value=history_detail[0].result.split(",")
+            if history_detail[0].result:
+                value=history_detail[0].result.split(",")
         reply={"request": request,"history":history_detail,"logged_in":logged_in,"value":value}
         return templates.TemplateResponse("details.html", reply)
     
@@ -223,8 +229,6 @@ async def submit_form(request: Request, db: Session = Depends(get_db)):
 
 
 # api
-
-
 @app.post("/users/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)

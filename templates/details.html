@@ -125,7 +125,16 @@
     {% if history %}
     <div class="result">
         <h1><u>Result</u></h1><br>
-
+        <br><br>
+        <form action="/detail/{{history[0].id}}" method="post">
+          <textarea type="text" name="name" placeholder="Name">{{history[0].name}}
+          </textarea>
+          <textarea name="desc" id="" cols="30" rows="2" placeholder="Enter the Description">
+            {{history[0].description}}
+          </textarea>    
+          <button type="submit">Update</button>
+          <br><br>
+        </form>
         <h3>Seq</h3><br>
         <textarea name="rna_seq" id="" 
         cols="30" rows="10" placeholder="Enter your Rna" >{{history[0].seq}}</textarea>
