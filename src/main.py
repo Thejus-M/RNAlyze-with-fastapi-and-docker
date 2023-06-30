@@ -72,7 +72,7 @@ async def register(request: Request,response:Response, db: Session = Depends(get
                 if password==user.hashed_password:
                     data = {"sub":login_email}
                     jwt_token = jwt.encode(data,PASSWORD,algorithm="HS256")
-                    response = RedirectResponse(url="/")
+                    response = RedirectResponse(url="/", status_code=303)
                     response.set_cookie(key="access_token",value=f"Bearer {jwt_token}",httponly=True)
                     return response
                 else:

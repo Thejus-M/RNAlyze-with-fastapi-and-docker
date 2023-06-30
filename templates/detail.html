@@ -54,36 +54,38 @@
 
 
 <nav class="navbar">
-    <div class="navbar-container container">
-      <input type="checkbox" name="" id="" />
-      <div class="hamburger-lines">
-        <span class="line line1"></span>
-        <span class="line line2"></span>
-        <span class="line line3"></span>
-      </div>
-      <div class="logo-container">
-        <div class="logo">
-          <img src="/static/img/llogo1.png" alt="Logo">
-          
-          
-        </div>
-        <div class="info-icon">            
-        <box-icon name='info-circle' animation='tada' color='#ffffff' ></box-icon>
-          <div class="description-dialog">
-            <p>RNAlyze is a Bioinformatics tool that classifies an RNA into Coding or Non-Coding RNA</p>
-          </div>
-        </div>
-        
-      </div>
-      <ul class="menu-items">
-        <li><a href="about.html" class="c-footer-link">About</a></li>
-        <li><a href="meettheteam.html"  class="c-footer-link">Meet the Team</a></li>
-      </ul>
-      <div class="login-button">
-        <a href="login.html">Login</a>
-      </div>
+<div class="navbar-container container">
+    <input type="checkbox" name="" id="" />
+    <div class="hamburger-lines">
+    <span class="line line1"></span>
+    <span class="line line2"></span>
+    <span class="line line3"></span>
     </div>
-  </nav>
+    <div class="logo-container">
+    <div class="logo">
+        <img src="/static/img/llogo1.png" alt="Logo">
+        
+        
+    </div>
+    <div class="info-icon">
+        <box-icon name='info-circle' animation='tada' color='#ffffff' ></box-icon>
+        <div class="description-dialog">
+        <p>RNAlyze is a Bioinformatics tool that classifies an RNA into Coding or Non-Coding RNA</p>
+        </div>
+    </div>
+    
+    </div>
+    <ul class="menu-items">
+    <li><a href="{{ url_for('about') }}" class="c-footer-link">About</a></li>
+    <li><a href="{{ url_for('team') }}"  class="c-footer-link">Meet the Team</a></li>
+    <li><a href="{{ url_for('history') }}"  class="c-footer-link">History</a></li>
+
+    </ul>
+    <div class="login-button">
+    <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+</div>
+</nav>
 
 
 

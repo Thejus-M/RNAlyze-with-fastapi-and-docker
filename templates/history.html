@@ -127,12 +127,13 @@
                     <td>{{rows.name}}</td>
                     <td>{{rows.description}}</td>
                     <td>{{rows.seq|truncate(20,True,'...')}}</td>
-                    <td>
-                        <a href="{{ url_for('details', user_id=rows.id) }}">
-                        <button class="button-details">
+                    <td style="align-items: center;text-align: center;">
+                      &nbsp;
+                      <button class="button-details">
+                          <a href="{{ url_for('details', user_id=rows.id) }}">
                                 Details
+                            </a> 
                         </button> 
-                        </a> 
                     </td>
                 </tr>
                 {% endfor %}
