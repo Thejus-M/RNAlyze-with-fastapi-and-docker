@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RNAlyze | Results</title>
+    <link rel="stylesheet" href="/static/css/home.css">
+    <link rel="stylesheet" href="/static/css/navbar.css">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/footer.css">
+    <link rel="icon" href="/static/img/rna.png" type="image/icon type">
+
+
+
+
+
+    <style>
+        .noCssReinstallServiceWorker {
+            margin-top: 1rem;
+            
+            display: inline-block;
+            /* margin-left: 600px  ; */
+            /* margin-right: auto; */
+            font-size: 30px;
+            border-radius: 1rem;
+            background: transparent;
+            transition: 125ms;
+            color: #d1d0c5;
+            opacity: 0.7;
+            font-family: 'Courier New', Courier, monospace;
+            
+            
+        }
+
+        .noCssReinstallServiceWorker:hover {
+            background: transparent;
+            color: #d1d0c5;
+            cursor: pointer;
+            opacity: 1;
+            -webkit-user-select: none;
+            user-select: none
+        }
+
+        .noCssReinstallServiceWorker:active {
+            background: #646669
+        }
+        .button-container {
+            margin-top: 4px; /* Adjust margin as needed */
+            /* justify-content: center; */
+            position: relative;
+        }
+    </style>
+</head>
+<body> 
+
+
+<nav class="navbar">
+    <div class="navbar-container container">
+      <input type="checkbox" name="" id="" />
+      <div class="hamburger-lines">
+        <span class="line line1"></span>
+        <span class="line line2"></span>
+        <span class="line line3"></span>
+      </div>
+      <div class="logo-container">
+        <div class="logo">
+          <img src="/static/img/llogo1.png" alt="Logo">
+          
+          
+        </div>
+        <div class="info-icon">            
+        <box-icon name='info-circle' animation='tada' color='#ffffff' ></box-icon>
+          <div class="description-dialog">
+            <p>RNAlyze is a Bioinformatics tool that classifies an RNA into Coding or Non-Coding RNA</p>
+          </div>
+        </div>
+        
+      </div>
+      <ul class="menu-items">
+        <li><a href="about.html" class="c-footer-link">About</a></li>
+        <li><a href="meettheteam.html"  class="c-footer-link">Meet the Team</a></li>
+      </ul>
+      <div class="login-button">
+        <a href="login.html">Login</a>
+      </div>
+    </div>
+  </nav>
+
+
+
+
+
+<br><br><br><br><br><br>
+<div class="container">
+
+  
+<form action="/add-db" method="post">
+    <div class="result">
+        <h1>To Save</h1><br>
+        <textarea name="name" id="" cols="30" rows="2">
+        </textarea>
+        <textarea name="desc" id="" cols="30" rows="4"></textarea>
+        <textarea name="seq" id="" cols="30" rows="10" readonly>{{seq}}</textarea>
+        <textarea name="features" id="" cols="30" rows="10" style="display: none;">{{f}}</textarea>
+        <textarea name="result" id="" cols="30" rows="10" style="display: none;">{{result}}</textarea>
+        <h2>
+    
+            <table>
+                <thead>
+                    <th>Features</th>
+                    <th>Values</th>
+                </thead>
+                <tbody>
+                    {% if features %}
+                    <tr>
+                        <td>Orf Length</td>
+                        <td>
+                            {{features.0|truncate(4,True,'')}}
+                        </td>
+                    
+                    <tr>
+                        <td>GC Content</td>
+                        <td>{{features.1|truncate(4,True,'')}}</td>
+                    
+                    <tr>
+                        <td>Transcript Length</td>
+                        <td>{{features.2|truncate(4,True,'')}}</td>
+                    
+                    <tr>
+                        <td>CPG Island</td>
+                        <td>{{features.3|truncate(4,True,'')}}</td>
+                    
+                    <tr>
+                        <td>Fickett Score</td>
+                        <td>{{features.4|truncate(4,True,'')}}</td>
+                    {% endif %}
+                </tbody>
+                
+            </table>
+            <br><br>
+                <div class="value">
+        
+                    <h3>The Sequences is a
+                        {% if result == 0 %}
+                        Non coding RNA
+                        {% else %}
+                        Coding RNA
+                        {% endif %}
+        
+                    </h3>
+                <br><br>
+            </div>
+            <button type="submit">Save</button>
+    
+    
+    
+    </div>
+</form>
+    
+
+
+
+<footer>
+    <div class="bottom">
+    </div>
+</footer>
+
+<script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+</body>
+</html>

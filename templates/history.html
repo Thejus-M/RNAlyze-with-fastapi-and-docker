@@ -2,79 +2,138 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>RNAlyze</title>
+    <title>RNAlyze | History</title>
     <link rel="stylesheet" href="/static/css/home.css">
     <link rel="stylesheet" href="/static/css/navbar.css">
     <link rel="stylesheet" href="/static/css/main.css">
     <link rel="stylesheet" href="/static/css/footer.css">
-    <link rel="icon" href="/static/img/logo.png" type="image/icon type">
+    <link rel="icon" href="/static/img/rna.png" type="image/icon type">
+
+
+
+
+
+    <style>
+        .noCssReinstallServiceWorker {
+            margin-top: 1rem;
+            
+            display: inline-block;
+            /* margin-left: 600px  ; */
+            /* margin-right: auto; */
+            font-size: 30px;
+            border-radius: 1rem;
+            background: transparent;
+            transition: 125ms;
+            color: #d1d0c5;
+            opacity: 0.7;
+            font-family: 'Courier New', Courier, monospace;
+            
+            
+        }
+
+        .noCssReinstallServiceWorker:hover {
+            background: transparent;
+            color: #d1d0c5;
+            cursor: pointer;
+            opacity: 1;
+            -webkit-user-select: none;
+            user-select: none
+        }
+
+        .noCssReinstallServiceWorker:active {
+            background: #646669
+        }
+        .button-container {
+            margin-top: 4px; /* Adjust margin as needed */
+            /* justify-content: center; */
+            position: relative;
+        }
+
+
+
+
+        .button-details{
+            color: #d1d0c5;
+            align-items: center;
+            text-align: center;
+        }
+    </style>
 </head>
 <body> 
 
+
 <nav class="navbar">
     <div class="navbar-container container">
-        <input type="checkbox" name="" id="" />
-        <div class="hamburger-lines">
-            <span class="line line1"></span>
-            <span class="line line2"></span>
-            <span class="line line3"></span>
+      <input type="checkbox" name="" id="" />
+      <div class="hamburger-lines">
+        <span class="line line1"></span>
+        <span class="line line2"></span>
+        <span class="line line3"></span>
+      </div>
+      <div class="logo-container">
+        <div class="logo">
+          <img src="/static/img/llogo1.png" alt="Logo">
+          
+          
         </div>
-        <ul class="menu-items">
-            <li><a href="{{ url_for('index')}}">Home</a></li>
-            <li><a href="#">About</a></li>
-            {% if logged_in %}
-            <li><a href="{{ url_for('logout')}}">Logout</a></li>
-            {% endif %}
-            <button><a href="{{ url_for('submit_form')}}">Try Out</a></button>
-        </ul>
-        <a href="{{ url_for('index')}}">
+        <div class="info-icon">
+            <box-icon name='info-circle' animation='tada' color='#ffffff' ></box-icon>
+          <div class="description-dialog">
+            <p>RNAlyze is a Bioinformatics tool that classifies an RNA into Coding or Non-Coding RNA</p>
+          </div>
+        </div>
+        
+      </div>
+      <ul class="menu-items">
+        <li><a href="{{ url_for('about') }}" class="c-footer-link">About</a></li>
+        <li><a href="{{ url_for('team') }}"  class="c-footer-link">Meet the Team</a></li>
+        <li><a href="{{ url_for('history') }}"  class="c-footer-link">History</a></li>
 
-            <h1 class="logo">
-
-                <img src="/static/img/logo.png" alt="Logo">
-                <img src="/static/img/name.png" alt="logo-name">
-            </h1>
-        </a>
+      </ul>
+      <div class="login-button">
+        <a href="{{ url_for('logout') }}">Logout</a>
+      </div>
     </div>
-</nav>
+  </nav>
 
 
 
 
 
 <br><br><br><br><br><br>
+
 <div class="container">
     
 
     {% if history %}
     <div class="result">
-        <h1><u>Result</u></h1><br>
+        <h1>History</h1><br>
         <h2>
             <table>
                 <tr>
-                    <th><span>Name</span> </th>
-                    <th><span>Description</span> </th>
-                    <th><span>Sequences</span> </th>
-                    <th><span>Buttons</span> </th>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Sequences</th>
+                    <th>Details</th>
                 </tr>
                 {% for rows in history %}
                 <tr>
+                    <td>
+                      <a href="{{ url_for('delete_item', item_id=rows.id) }}">
+                        <box-icon name='x-circle' type='solid' color='#ce0000' ></box-icon>
+                      </a>
+                    </td>
                     <td>{{rows.name}}</td>
                     <td>{{rows.description}}</td>
                     <td>{{rows.seq|truncate(20,True,'...')}}</td>
-                    <td>
-                        <br>
-                        <a href="{{ url_for('details', user_id=rows.id) }}">
-                        <button>
+                    <td style="align-items: center;text-align: center;">
+                      &nbsp;
+                      <button class="button-details">
+                          <a href="{{ url_for('details', user_id=rows.id) }}">
                                 Details
+                            </a> 
                         </button> 
-                        </a>
-                        <br>
-                        <a href="{{ url_for('delete_item', item_id=rows.id) }}">
-                        <button>
-                                Delete
-                        </button> 
-                        </a> <br>
                     </td>
                 </tr>
                 {% endfor %}
@@ -87,14 +146,30 @@
 
 
 
-
 <footer>
-    <div class="bottom">
-    </div>
+  <div class="bottom">
+  </div>
 </footer>
 
+<script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

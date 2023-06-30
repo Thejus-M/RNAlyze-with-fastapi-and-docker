@@ -4,47 +4,222 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>atcg.Bio</title>
+    <title>RNAlyze</title>
     <link rel="stylesheet" href="/static/css/navbar.css">
     <link rel="stylesheet" href="/static/css/footer.css">
     <link rel="stylesheet" href="/static/css/home.css">
     <link rel="stylesheet" href="/static/css/main.css">
-    <link rel="icon" href="/static/img/logo.png" type="image/icon type">
+    <link rel="icon" href="/static/img/rna.png" type="image/icon type">
+    <style>
+        .text {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          margin: 0;
+          background-color: #11201e; /* Set the desired background color */
+        }
+        
+        .text-field {
+          position: relative;
+          display: inline-block;
+          text-align: center;
+        }
+        
+
+        .text-field label {
+            position: absolute;
+            top: -40px;
+            right: 80px;
+            font-size: 24px;
+            color: #999999;
+            font-family: 'Courier New', Courier, monospace;
+        } 
+
+        .text-field textarea {
+          background-color: transparent;
+          border: none;
+          outline: none;
+          color: #fff8d6; /* Set the desired text color */
+          font-size: 35px; /* Set the desired font size */
+          width: 1500px; /* Set the desired width */
+          height: 400px; /* Set the desired height */
+          
+          resize: vertical;
+        }
+        
+        .text-field::before {
+          content: attr(data-count);
+          position: absolute;
+          top: 0;
+          right: 0;
+          padding: 5px;
+          font-size: 16px; /* Set the desired font size for character count */
+          color: #999999; /* Set the desired color for character count */
+        }
+
+        .text-field .input-container {
+            position: relative;
+        }
+
+        .text-field .character-count {
+        position: absolute;
+        top: -40px;
+        right: 5px;
+        margin-bottom: 40px;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 24px; /* Set the desired font size for character count */
+        color: #999999; /* Set the desired color for character count */
+        }
+
+
+        .text-field textarea::placeholder {
+             color: #fff8d6; /* Set the desired color for the placeholder text */
+             font-family: 'Courier New', Courier, monospace;
+        }
+
+
+        .button-container {
+            margin-top: 4px; /* Adjust margin as needed */
+        }
+
+
+      </style>
         
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-container container">
-            <input type="checkbox" name="" id="" />
-            <div class="hamburger-lines">
-                <span class="line line1"></span>
-                <span class="line line2"></span>
-                <span class="line line3"></span>
-            </div>
-            <ul class="menu-items">
-                <li><a href="{{ url_for('index')}}">Home</a></li>
-                <li><a href="#">About</a></li>
-                {% if logged_in %}
-                <li><a href="{{ url_for('logout')}}">Logout</a></li>
-                <li><a href="{{ url_for('his')}}">History</a></li>
-                {% endif %}
-                <button><a href="{{ url_for('submit_form')}}">Try Out</a></button>
-            </ul>
-            <a href="#">
-    
-                <h1 class="logo">
-    
-                    <img src="/static/img/logo.png" alt="Logo">
-                </h1>
-            </a>
+
+    <style>
+        .noCssReinstallServiceWorker {
+            margin-top: 1rem;
+            padding: 1rem;
+            display: inline-block;
+            font-size: 30px;
+            border-radius: 1rem;
+            background: #2c2e31;
+            transition: 125ms;
+            color: #d1d0c5;
+            font-family: 'Courier New', Courier, monospace;
+            
+        }
+
+        .noCssReinstallServiceWorker:hover {
+            background: #d1d0c5;
+            color: #333;
+            cursor: pointer;
+            -webkit-user-select: none;
+            user-select: none
+        }
+
+        .noCssReinstallServiceWorker:active {
+            background: #646669
+        }
+
+
+        .noCssReinstallServiceWorker .check{
+          color: #d1d0c5; text-decoration: none;
+        }
+
+        /* .noCssReinstallServiceWorker .check:hover{
+          color: #0000; text-decoration: none;
+        } */
+
+    </style>
+      
+<nav class="navbar">
+  <div class="navbar-container container">
+    <input type="checkbox" name="" id="" />
+    <div class="hamburger-lines">
+      <span class="line line1"></span>
+      <span class="line line2"></span>
+      <span class="line line3"></span>
+    </div>
+    <div class="logo-container">
+      <div class="logo">
+        <img src="/static/img/llogo1.png" alt="Logo">
+        
+        
+      </div>
+      <div class="info-icon">          
+          <box-icon name='info-circle' animation='tada' color='#ffffff' ></box-icon>
+            
+        <div class="description-dialog">
+          <p>RNAlyze is a Bioinformatics tool that classifies an RNA into Coding or Non-Coding RNA</p>
         </div>
-    </nav>
-    <div class="contents">  
+      </div>
+      
+    </div>
+    <ul class="menu-items">
+      <li><a href="{{ url_for('about') }}" class="c-footer-link">About</a></li>
+      <li><a href="{{ url_for('team') }}"  class="c-footer-link">Meet the Team</a></li>
+      {% if logged_in %}     
+      <li><a href="{{ url_for('history') }}"  class="c-footer-link">History</a></li>
+      {% endif %}
+    </ul>
+    {% if not logged_in %}      
+    <div class="login-button">
+      <a href="{{ url_for('login') }}">Login</a>
+    </div>
+    {% else %}   
+    <div class="login-button">
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+    {% endif %}
+  </div>
+</nav>
+
+
+      
+    <form action="/result" method="post">
+      <div class="text">
+        <div class="text-field" data-count="">
+          <label for="rnaTextarea">Sequence Length :</label>
+          <div class="input-container">
+            <textarea id="rnaTextarea" oninput="convertToUppercase(this); updateCharacterCount(this)"
+              name="rna"
+              placeholder="Enter the RNA Sequence here..."></textarea>
+            <span class="character-count"></span>
+            <div class="button-container">
+              <button class="noCssReinstallServiceWorker"  type="submit">Check the Result</button>
+            </div>
+          </div>
+    
+    
+    
+        </div>
+      </div>
+    </form>
+
+
+
+    
+    <!-- <span class="noCssReinstallServiceWorker" onclick="reinstallServiceWorker()">Try RNAlyze </span></span>
+     -->
+    <script>
+        // function updateCharacterCount(input) {
+        //   var countElement = input.parentNode;
+        //   countElement.setAttribute('data-count', input.value.length);
+        // }
+
+        function convertToUppercase(input) {
+             input.value = input.value.toUpperCase();
+        }
+
+        function updateCharacterCount(input) {
+        var countElement = input.parentNode.querySelector('.character-count');
+        var lengthElement = input.parentNode.querySelector('.sequence-length');
+        var value = input.value.trim();
+        countElement.textContent = value.length || '0';
+        lengthElement.textContent = value === '' ? '0' : value.trim().split(/\s+/).length;
+        }
+    </script>
+
+    <!-- <div class="contents">  
 
         <br><br>
         <br><br>
         <div class="box">
-            <img src="/static/img/logo.png" alt="Logo-with-Name">
+            <img src="logo.png" alt="Logo-with-Name">
             <br>RNAlyse is a webapp that lets you find if a given RNAs are coding or not. It is free, easy to use and fast. No
             data
             is saved.
@@ -58,11 +233,40 @@
                 <button>Try Now</button>
             </a>
         </div>
-    </div>
+        <div class="">
+            {% if logged_in %}
+        <p>Welcome, you are logged in! {{logged_in}}</p>
+        {% else %}
+        <p>Please log in to access this page. i{{logged_in}}</p>
+        {% endif %}
+        </div> -->
+    <!-- </div> -->
     
     <footer>
-        <div class="bottom">
-        </div>
+      <div id="w-node-_1483c4bf-fea1-e487-e21d-33df7b9f9c57-30076f84" class="c-footercol cc-trust">
+        <div class="c-footer-link">2023 © ATCG All rights reserved.</div>
+      <!-- <a href="" class="c-footer-link">Github</a><a href="" class="c-footer-link">How to install locally</a> -->
+      </div>
+      </div>
+
+
+      
+      <div id="github-logo">
+        <a href="https://github.com/Thejus-M/RNAlyze-with-fastapi-and-docker">
+          <img src="/static/img/gihtub.png" alt="GitHub Logo">
+        </a>
+      </div>
+
+      <div id="install-locally">
+        <span class="install-text"><a href="https://github.com/Thejus-M/RNAlyze-with-fastapi-and-docker#usage-" class="text-install">How to install locally</a></span>
+        <box-icon name='chevron-right' color='#ffffff' ></box-icon>
+      </div>
+      
+      
+
+
+
     </footer>
+    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 </body>
 </html>
