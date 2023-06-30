@@ -75,7 +75,7 @@
 
         .text-field textarea::placeholder {
              color: #fff8d6; /* Set the desired color for the placeholder text */
-             font-family: 'Courier New', Courier, monospace;
+            font-family: 'Courier New', Courier, monospace;
         }
 
 
@@ -150,6 +150,7 @@
       
     </div>
     <ul class="menu-items">
+      <li><a href="{{ url_for('index') }}" class="c-footer-link">Home</a></li>
       <li><a href="{{ url_for('about') }}" class="c-footer-link">About</a></li>
       <li><a href="{{ url_for('team') }}"  class="c-footer-link">Meet the Team</a></li>
       {% if logged_in %}     
@@ -214,33 +215,6 @@
         }
     </script>
 
-    <!-- <div class="contents">  
-
-        <br><br>
-        <br><br>
-        <div class="box">
-            <img src="logo.png" alt="Logo-with-Name">
-            <br>RNAlyse is a webapp that lets you find if a given RNAs are coding or not. It is free, easy to use and fast. No
-            data
-            is saved.
-        
-            RNAlyse can help biologists identify whether their RNA sequences are coding or not. This will help them understand
-            the function of the gene they are studying and how their cDNAs are working together with other genes in order to
-            produce proteins.
-            <br><br><br>
-            &nbsp;<a class="but" href="{{ url_for('submit_form')}}">
-                <br>
-                <button>Try Now</button>
-            </a>
-        </div>
-        <div class="">
-            {% if logged_in %}
-        <p>Welcome, you are logged in! {{logged_in}}</p>
-        {% else %}
-        <p>Please log in to access this page. i{{logged_in}}</p>
-        {% endif %}
-        </div> -->
-    <!-- </div> -->
     
     <footer>
       <div id="w-node-_1483c4bf-fea1-e487-e21d-33df7b9f9c57-30076f84" class="c-footercol cc-trust">

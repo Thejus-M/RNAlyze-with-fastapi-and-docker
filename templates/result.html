@@ -55,7 +55,10 @@
 
 
 
-<nav class="navbar">
+
+
+
+  <nav class="navbar">
     <div class="navbar-container container">
       <input type="checkbox" name="" id="" />
       <div class="hamburger-lines">
@@ -79,24 +82,24 @@
         
       </div>
       <ul class="menu-items">
-        <li><a href="{{ url_for('about')}}" class="c-footer-link">About</a></li>
-        <li><a href="{{ url_for('team')}}"  class="c-footer-link">Meet the Team</a></li>
+      <li><a href="{{ url_for('index') }}" class="c-footer-link">Home</a></li>
+      <li><a href="{{ url_for('about') }}" class="c-footer-link">About</a></li>
+        <li><a href="{{ url_for('team') }}"  class="c-footer-link">Meet the Team</a></li>
+        {% if logged_in %}     
+        <li><a href="{{ url_for('history') }}"  class="c-footer-link">History</a></li>
+        {% endif %}
       </ul>
-      {% if logged_in %}      
+      {% if not logged_in %}      
       <div class="login-button">
-        <a href="{{ url_for('login')}}">Login</a>
+        <a href="{{ url_for('login') }}">Login</a>
       </div>
       {% else %}   
       <div class="login-button">
-        <a href="{{ url_for('logout')}}">Logout</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
       </div>
       {% endif %}
     </div>
   </nav>
-
-
-
-
 
 <br><br><br><br><br><br>
 <div class="container">
