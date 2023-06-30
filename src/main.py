@@ -124,6 +124,39 @@ async def logout(request: Request,response: Response):
 # async def index_post(request: Request):
 #     return RedirectResponse(url="/", status_code=303)
 
+@app.post("/save")
+async def save(request:Request):    
+    data = await request.form()
+    seq = data['seq']
+    features = data['features']
+    f=features.split(',')
+    result = data['result']
+    reply={"request": request,"seq":seq,"features":f,"f":features,"result":result}
+    return templates.TemplateResponse("save.html", reply)
+
+@app.post("/add-db")
+async def add_db(request: Request, db: Session = Depends(get_db)): 
+    access_token = request.cookies.get("access_token")
+    if access_token:
+        decoded_token = jwt.decode(access_token.split("Bearer ")[1],PASSWORD, algorithms=["HS256"])
+        email = decoded_token.get("sub")
+    if not decoded_token:
+        return RedirectResponse(url="/", status_code=303)
+    data = await request.form()
+    value = data['seq']
+    name = data['name']
+    desc = data['desc']
+    features = data['features']
+    result = data['result']
+    print(result[0])
+    r=f"{features[0]},{features[1]},{features[2]},{features[3]},{features[4]},{result[0]}"
+    print(r)
+    sequence = models.Sequences(name=name, seq=value,
+                                description=desc,result=r,
+                                owner_id=email)
+    crud.create_seq(db=db, seq=sequence)
+    return RedirectResponse(url="/history", status_code=303)
+    
 
 @app.post("/detail/{item_id}")
 async def edit_item(request:Request,item_id: int, db: Session = Depends(get_db)):
@@ -150,12 +183,6 @@ async def get_result(request: Request, db: Session = Depends(get_db)):
         for s in set_value:
             if s not in rna_seq_poss:
                 return templates.TemplateResponse("form.html", {"request": request,"error": "Should only use A,C,T,G"})
-
-
-    # name = data.get("name")
-    # desc = data.get("desc")
-    name=None
-    desc=None
     decoded_token=None
     email=None
     logged_in=False
@@ -171,16 +198,16 @@ async def get_result(request: Request, db: Session = Depends(get_db)):
         features = calculate_features(seq)
         result=model.predict(features)
         r=f"{features[0][0]},{features[0][1]},{features[0][2]},{features[0][3]},{features[0][4]},{result[0]}"
-        if decoded_token:
-            sequence = models.Sequences(name=name, seq=value,
-                                        description=desc,result=r,
-                                        owner_id=email)
-            crud.create_seq(db=db, seq=sequence)
+        # if decoded_token:
+        #     sequence = models.Sequences(name=name, seq=value,
+        #                                 description=desc,result=r,
+        #                                 owner_id=email)
+        #     crud.create_seq(db=db, seq=sequence)
     else:
         seq=''
-        features=None
+        features=[None]
         result=None
-    reply={"request": request,"text":value,'seq':seq,
+    reply={"request": request,"text":value,'seq':seq,"r":r,
         'features':features,'result':result,"logged_in":logged_in}
     return templates.TemplateResponse("result.html", reply)
 

@@ -53,8 +53,6 @@
 <body> 
 
 
-
-
 <nav class="navbar">
     <div class="navbar-container container">
       <input type="checkbox" name="" id="" />
@@ -69,9 +67,8 @@
           
           
         </div>
-        <div class="info-icon">          
-            <box-icon name='info-circle' animation='tada' color='#ffffff' ></box-icon>
-              
+        <div class="info-icon">            
+        <box-icon name='info-circle' animation='tada' color='#ffffff' ></box-icon>
           <div class="description-dialog">
             <p>RNAlyze is a Bioinformatics tool that classifies an RNA into Coding or Non-Coding RNA</p>
           </div>
@@ -79,18 +76,12 @@
         
       </div>
       <ul class="menu-items">
-        <li><a href="{{ url_for('about')}}" class="c-footer-link">About</a></li>
-        <li><a href="{{ url_for('team')}}"  class="c-footer-link">Meet the Team</a></li>
+        <li><a href="about.html" class="c-footer-link">About</a></li>
+        <li><a href="meettheteam.html"  class="c-footer-link">Meet the Team</a></li>
       </ul>
-      {% if logged_in %}      
       <div class="login-button">
-        <a href="{{ url_for('login')}}">Login</a>
+        <a href="login.html">Login</a>
       </div>
-      {% else %}   
-      <div class="login-button">
-        <a href="{{ url_for('logout')}}">Logout</a>
-      </div>
-      {% endif %}
     </div>
   </nav>
 
@@ -102,46 +93,54 @@
 <div class="container">
 
   
-    {% if features %}
+<form action="/add-db" method="post">
     <div class="result">
-        <h1>Result</h1><br>
+        <h1>To Save</h1><br>
+        <textarea name="name" id="" cols="30" rows="2"></textarea>
+        <textarea name="desc" id="" cols="30" rows="4"></textarea>
+        <textarea name="seq" id="" cols="30" rows="10" readonly>{{seq}}</textarea>
+        <textarea name="features" id="" cols="30" rows="10" >{{f}}</textarea>
+        <textarea name="result" id="" cols="30" rows="10" >{{result}}</textarea>
         <h2>
     
             <table>
                 <thead>
-                    <tr>
-                    <th>Sequences</th>
-                    <th>{{seq|truncate(20,True,'...')}}</th>
+                    <th>Features</th>
+                    <th>Values</th>
                 </thead>
                 <tbody>
+                    {% if features %}
                     <tr>
                         <td>Orf Length</td>
-                        <td>{{features.0.0|round(2)}}</td>
+                        <td>
+                            {{features.0|truncate(4,True,'')}}
+                        </td>
                     
                     <tr>
                         <td>GC Content</td>
-                        <td>{{features.0.1|round(2)}}</td>
+                        <td>{{features.1|truncate(4,True,'')}}</td>
                     
                     <tr>
                         <td>Transcript Length</td>
-                        <td>{{features.0.2|round(2)}}</td>
+                        <td>{{features.2|truncate(4,True,'')}}</td>
                     
                     <tr>
                         <td>CPG Island</td>
-                        <td>{{features.0.3|round(2)}}</td>
+                        <td>{{features.3|truncate(4,True,'')}}</td>
                     
                     <tr>
                         <td>Fickett Score</td>
-                        <td>{{features.0.4|round(2)}}</td>
-                    
+                        <td>{{features.4|truncate(4,True,'')}}</td>
+                    {% endif %}
                 </tbody>
                 
             </table>
             <br><br>
                 <div class="value">
+                    {{features}}
         
                     <h3>The Sequences is a
-                        {% if result.0 == 0 %}
+                        {% if result == 0 %}
                         Non coding RNA
                         {% else %}
                         Coding RNA
@@ -150,39 +149,13 @@
                     </h3>
                 <br><br>
             </div>
-
-
-{% endif %}
-
-
-{% if not logged_in %}
-
-<div class="button-container">
-    <span class="noCssReinstallServiceWorker" onclick="reinstallServiceWorker()">
-        <a href="{{ url_for('login')}}" style="color: #d1d0c5; opacity: 0.7; text-decoration: none;">
-            Sign in to save your result
-        </a>
-    </span>
-</div>
-
-{% else %}
-<form action="/save" method="post">
-    <div class="" style="display: none;">
-        <textarea name="seq" id="" cols="30" rows="10">{{seq}}</textarea>
-        <textarea name="features" id="" cols="30" rows="10">{{r}}</textarea>
-        <textarea name="result" id="" cols="30" rows="10">{{result}}</textarea>
-    </div>
-    <div class="button-container">
-        <button class="noCssReinstallServiceWorker" type="submit">                
-            Save your result
-        </button>
+            <button type="submit">Save</button>
+    
+    
+    
     </div>
 </form>
-
-
-{% endif %}
-
-
+    
 
 
 
@@ -190,6 +163,7 @@
     <div class="bottom">
     </div>
 </footer>
+
 <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 </body>
 </html>
