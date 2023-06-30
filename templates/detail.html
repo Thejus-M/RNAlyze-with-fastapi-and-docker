@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>RNAlyze | History</title>
+    <title>RNAlyze | Results</title>
     <link rel="stylesheet" href="/static/css/home.css">
     <link rel="stylesheet" href="/static/css/navbar.css">
     <link rel="stylesheet" href="/static/css/main.css">
@@ -48,15 +48,6 @@
             /* justify-content: center; */
             position: relative;
         }
-
-
-
-
-        .button-details{
-            color: #d1d0c5;
-            align-items: center;
-            text-align: center;
-        }
     </style>
 </head>
 <body> 
@@ -76,8 +67,8 @@
           
           
         </div>
-        <div class="info-icon">
-            <box-icon name='info-circle' animation='tada' color='#ffffff' ></box-icon>
+        <div class="info-icon">            
+        <box-icon name='info-circle' animation='tada' color='#ffffff' ></box-icon>
           <div class="description-dialog">
             <p>RNAlyze is a Bioinformatics tool that classifies an RNA into Coding or Non-Coding RNA</p>
           </div>
@@ -85,13 +76,11 @@
         
       </div>
       <ul class="menu-items">
-        <li><a href="{{ url_for('about') }}" class="c-footer-link">About</a></li>
-        <li><a href="{{ url_for('team') }}"  class="c-footer-link">Meet the Team</a></li>
-        <li><a href="{{ url_for('history') }}"  class="c-footer-link">History</a></li>
-
+        <li><a href="about.html" class="c-footer-link">About</a></li>
+        <li><a href="meettheteam.html"  class="c-footer-link">Meet the Team</a></li>
       </ul>
       <div class="login-button">
-        <a href="{{ url_for('logout') }}">Logout</a>
+        <a href="login.html">Login</a>
       </div>
     </div>
   </nav>
@@ -101,70 +90,79 @@
 
 
 <br><br><br><br><br><br>
-
 <div class="container">
-    
 
-    {% if history %}
+  
+    
     <div class="result">
-        <h1>History</h1><br>
+        <h1>Details</h1><br>
+        <textarea name="name" id="" cols="30" rows="2">
+            {{history.0.name}}
+        </textarea>
+        <textarea name="desc" id="" cols="30" rows="4">{{history.0.description}}</textarea>
+        <textarea name="seq" id="" cols="30" rows="10">{{history.0.seq}}</textarea>
         <h2>
+    
             <table>
-                <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Sequences</th>
-                    <th>Details</th>
-                </tr>
-                {% for rows in history %}
-                <tr>
-                    <td>{{rows.name}}</td>
-                    <td>{{rows.description}}</td>
-                    <td>{{rows.seq|truncate(20,True,'...')}}</td>
-                    <td>
-                        <a href="{{ url_for('details', user_id=rows.id) }}">
-                        <button class="button-details">
-                                Details
-                        </button> 
-                        </a> 
-                    </td>
-                </tr>
-                {% endfor %}
+                <thead>
+                    <th>Features</th>
+                    <th>Values</th>
+                </thead>
+                <tbody>
+                    {% if value %}
+                    <tr>
+                        <td>Orf Length</td>
+                        <td>{{value.0|truncate(4,True,'')}}</td>
+                    
+                    <tr>
+                        <td>GC Content</td>
+                        <td>{{value.1|truncate(4,True,'')}}</td>
+                    
+                    <tr>
+                        <td>Transcript Length</td>
+                        <td>{{value.2|truncate(4,True,'')}}</td>
+                    
+                    <tr>
+                        <td>CPG Island</td>
+                        <td>{{value.3|truncate(4,True,'')}}</td>
+                    
+                    <tr>
+                        <td>Fickett Score</td>
+                        <td>{{value.4|truncate(4,True,'')}}</td>
+                    {% endif %}
+                </tbody>
+                
             </table>
             <br><br>
-    </div>
-    {% endif %}
+                <div class="value">
+                    {{features}}
+        
+                    <h3>The Sequences is a
+                        {% if value.5 == 0 %}
+                        Non coding RNA
+                        {% else %}
+                        Coding RNA
+                        {% endif %}
+        
+                    </h3>
+                <br><br>
+            </div>
+
+
+            <!-- <div class="">
+                <button>Update</button>
+                <button>Delete</button>
+            </div> -->
+
 </div>
 
 
 
-
 <footer>
-  <div class="bottom">
-  </div>
+    <div class="bottom">
+    </div>
 </footer>
 
 <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

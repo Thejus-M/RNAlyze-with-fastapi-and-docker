@@ -1,13 +1,53 @@
-*,
-*::after,
-*::before {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-  font-family: "Poppins", sans-serif;
-}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RNAlyze | Meet the Team</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #fff8d6;
+    }
+    
+    
+    .heading {
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .team-section {
 
-.logo img{
+    margin-top: 100px;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .team-member {
+      margin: 10px;
+    }
+    
+    .team-member img {
+      width: 400px;
+      height: 500px;
+      object-fit: cover;
+      filter: grayscale(100%);
+    }
+    
+    .team-member span {
+      display: block;
+      text-align: center;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+
+
+
+
+
+    .logo img{
   /* margin-top: 40px; */
   margin-top: 1rem;
   height: 70px;
@@ -32,8 +72,8 @@
 .navbar {
   position: fixed;
   width: 100%;
-  background: #11201e;
-  /* color: #fff8d6; */
+  background: #fff8d6;
+  color: #fff8d6;
 }
 
 .logo-container {
@@ -100,7 +140,8 @@
   margin-top: 1rem;
   margin-right: 80px;
   display: flex;
-  justify-content: center;
+  
+  /* justify-content: center; */
   /* padding-right: 80px; */
 
 }
@@ -120,8 +161,18 @@
   font-size: 25px;
   /* color: #; */
   font-family: 'Courier New', Courier, monospace;
+  color: #11201e;
+  font-weight: bold;
 }
 
+
+.menu-items li a:hover{
+  font-size: 25px;
+  /* color: #; */
+  font-family: 'Courier New', Courier, monospace;
+  color: #11201e;
+  font-size: 30px;
+}
 
 
 /* .menu-items li::after {
@@ -164,7 +215,7 @@
 
 .login-button {
   display: inline-block;
-  border: 2px solid #fff8d6;
+  border: 2px solid #11201e;
   transition: border-color 0.3s ease;
   margin-left: auto; /* Adjust to position the login button at the end */
   order: 3;
@@ -176,21 +227,22 @@
   padding: 10px 20px;
   /* border-radius: 5px; */
   background-color: transparent;
-  color: #ffffff;
+  color: #000000;
   font-size: 25px;
   font-family: 'Courier New', Courier, monospace;
   text-decoration: none;
   font-weight: bold;
   transition: background-color 0.3s ease, color 0.3s ease;
+
 }
 
 .login-button:hover {
-  border-color: #2c2e31;
+  background-color: #11201e;
 }
 
 .login-button:hover a {
-  background-color: #fff8d6;
-  color:  #11201e;
+  /* background-color: #fff8d6; */
+  color:  #fff8d6;
   
 }
 
@@ -369,96 +421,122 @@ button:hover {
 
 
 
-#w-node-_1483c4bf-fea1-e487-e21d-33df7b9f9c57-30076f84 {
-  display: flex;
-  justify-content: center;
-  margin-left: -3.5rem;
-  
-}
 
-.c-footercol {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 10px; /* Adjust the spacing between the links */
-}
-
-.c-footer-link {
-  text-decoration: none;
-  color: #ffffff; /* Adjust the link color */
-  font-size: 20px; /* Adjust the font size */
-  position: relative;
-  
-  
-}
-
-.c-footer-link::after {
+.menu-items li.line-below::after {
   content: "";
   position: absolute;
   bottom: -2px;
   left: 0;
-  width: 100%;
+  text-decoration: underline;
+  /* width: 100%;
   height: 2px;
-  background-color: #ffffff; /* Adjust the underline color */
+  background-color: #fff; 
   transform: scaleX(0);
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease; */
 }
 
-.c-footer-link:hover::after {
+
+.menu-items li.line-below:hover::after {
   transform: scaleX(1);
 }
 
 
 
-#github-logo {
-  position: fixed;
-  bottom: 20px; /* Adjust the distance from the bottom */
-  left: 40px; /* Adjust the distance from the left */
-}
-
-#github-logo img {
-  width: 150px; /* Adjust the size of the logo */
-}
 
 
 
-#install-locally {
-  position: fixed;
-  bottom: 30px; /* Adjust the distance from the bottom */
-  right: 40px; /* Adjust the distance from the right */
-  display: flex;
-  align-items: center;
-}
 
-/* .install-text {
-  margin-right: 5px; 
-  color: #ffffff; 
-  font-size: 20px;
-}
 
-.install-text:hover{
-  text-decoration: underline;
-} */
 
-.chevron-icon {
-  font-size: 20px; /* Adjust the size of the chevron icon */
-  color: #ffffff; /* Adjust the icon color */
-}
 
-.text-install{
-  margin-right: 5px; /* Adjust the spacing between the text and icon */
-  color: #ffffff; /* Adjust the text color */
-  font-size: 20px;
-}
 
-.install-text:hover{
-  text-decoration: underline;
-}
 
-.arrow-icon {
-  width: 10px;
-  height: 10px;
-  border-top: 2px solid #ffffff; /* Adjust the color and thickness of the arrow */
-  border-right: 2px solid #ffffff; /* Adjust the color and thickness of the arrow */
-  transform: rotate(45deg); /* Rotate the arrow by 45 degrees */
-}
+
+
+
+
+
+
+  </style>
+
+<link rel="icon" href="/static/img/rna.png" type="image/icon type">
+
+<!-- <link rel="stylesheet" href="navbar.css"> -->
+</head>
+<body>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <nav class="navbar">
+        <div class="navbar-container container">
+          <input type="checkbox" name="" id="" />
+          <div class="hamburger-lines">
+            <span class="line line1"></span>
+            <span class="line line2"></span>
+            <span class="line line3"></span>
+          </div>
+          <div class="logo-container">
+            <div class="logo">
+              <img src="/static/img/logodark1.png" alt="Logo">
+              
+              
+            </div>
+            <div class="info-icon">
+              <box-icon name='info-circle' animation='tada' ></box-icon>
+              <div class="description-dialog">
+                <p>RNAlyze is a Bioinformatics tool that classifies an RNA into Coding or Non-Coding RNA</p>
+              </div>
+            </div>
+            
+          </div>
+          <ul class="menu-items">
+            <!-- <li><a href="#" class="c-footer-link">About</a></li>
+            <li><a href="#"  class="c-footer-link">Meet the Team</a></li> -->
+          </ul>
+          <div class="login-button">
+            <a href="{{ url_for('index')}}">Try RNAlyze</a>
+          </div>
+        </div>
+      </nav>
+
+  
+  <div class="heading">
+    <h1>Meet the Team</h1>
+  </div>
+  
+  <div class="team-section">
+    <div class="team-member">
+      <img src="/static/img/amal.JPG" alt="Team Member 1">
+      <span style="font-size: 30px; font-weight: bold; color: #263A29;">AMAL E J</span>
+    </div>
+    <div class="team-member">
+      <img src="/static/img/caroolene.jpg" alt="Team Member 2">
+      <span style="font-size: 30px; font-weight: bold; color: #263A29;">CAROLENE JOY</span>
+    </div>
+    <div class="team-member">
+      <img src="/static/img/jeffrey.jpg" alt="Team Member 3">
+      <span style="font-size: 30px; font-weight: bold; color: #263A29;">JEFFREY SHIJO</span>
+    </div>
+    <div class="team-member">
+      <img src="/static/img/t.jpg" alt="Team Member 4">
+      <span style="font-size: 30px; font-weight: bold; color: #263A29;">THEJUS M MANOJ</span>
+    </div>
+  </div>
+
+
+<script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+
+</body>
+</html>
+
