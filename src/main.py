@@ -2,6 +2,7 @@ import os
 import pickle
 from re import template
 import string
+import bcrypt
 
 from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -42,11 +43,10 @@ def logged_in(request):
     return False
 
 
-
 @app.post("/login")
-async def register(request: Request,response:Response, db: Session = Depends(get_db)):
-    error=[]
-    success=[]
+async def register(request: Request, response: Response, db: Session = Depends(get_db)):
+    error = []
+    success = []
     data = await request.form()
     login_email = data.get("email")
     reg_email = data.get("email-in") 
@@ -54,33 +54,35 @@ async def register(request: Request,response:Response, db: Session = Depends(get
         # registration
         password = data.get("pswd-in")
         confirm_pass = data.get("confirmpswd-in")
-        user = models.User(email=reg_email, hashed_password=password)
-        if password!=confirm_pass:
+        hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+        user = models.User(email=reg_email, hashed_password=hashed_password)
+        if password != confirm_pass:
             return RedirectResponse('/register', status_code=303)
         crud.create_user(db=db, user=user)
         return templates.TemplateResponse("login.html", {"request": request})
     else:
         # login/sign in
         try:
-            user=db.query(models.User).filter(models.User.email==login_email).first()
+            user = db.query(models.User).filter(models.User.email == login_email).first()
             if user is None:
-                error.append("Email does not exists")
-                reply={"request":request,"error":error}
-                return templates.TemplateResponse('login.html',reply)
+                error.append("Email does not exist")
+                reply = {"request": request, "error": error}
+                return templates.TemplateResponse('login.html', reply)
             else:
                 password = data.get("password")
-                if password==user.hashed_password:
-                    data = {"sub":login_email}
-                    jwt_token = jwt.encode(data,PASSWORD,algorithm="HS256")
+                if bcrypt.checkpw(password.encode(), user.hashed_password):
+                    data = {"sub": login_email}
+                    jwt_token = jwt.encode(data, PASSWORD, algorithm="HS256")
                     response = RedirectResponse(url="/", status_code=303)
-                    response.set_cookie(key="access_token",value=f"Bearer {jwt_token}",httponly=True)
+                    response.set_cookie(key="access_token", value=f"Bearer {jwt_token}", httponly=True)
                     return response
                 else:
                     error.append("Invalid password")
         except:  
             error.append("Unexpected error!!!")
-            reply={"request":request,"error":error}
-            return templates.TemplateResponse('login.html',reply)
+            reply = {"request": request, "error": error}
+            return templates.TemplateResponse('login.html', reply)
+
         
 
 
@@ -126,12 +128,18 @@ async def logout(request: Request,response: Response):
 
 @app.post("/save")
 async def save(request:Request):    
+    access_token = request.cookies.get("access_token")
+    logged_in=False
+    if access_token:
+        decoded_token = jwt.decode(access_token.split("Bearer ")[1],PASSWORD, algorithms=["HS256"])
+        email = decoded_token.get("sub")
+        logged_in=True
     data = await request.form()
     seq = data['seq']
     features = data['features']
     f=features.split(',')
     result = data['result']
-    reply={"request": request,"seq":seq,"features":f,"f":features,"result":result}
+    reply={"request": request,"seq":seq,"features":f,"f":features,"result":result,"logged_in":logged_in}
     return templates.TemplateResponse("save.html", reply)
 
 @app.post("/add-db")
@@ -147,6 +155,7 @@ async def add_db(request: Request, db: Session = Depends(get_db)):
     name = data['name']
     desc = data['desc']
     features = data['features']
+    features=features.split(',')
     result = data['result']
     print(result[0])
     r=f"{features[0]},{features[1]},{features[2]},{features[3]},{features[4]},{result[0]}"
@@ -182,7 +191,7 @@ async def get_result(request: Request, db: Session = Depends(get_db)):
         rna_seq_poss = {'A','T','G','C'}
         for s in set_value:
             if s not in rna_seq_poss:
-                return templates.TemplateResponse("form.html", {"request": request,"error": "Should only use A,C,T,G"})
+                return templates.TemplateResponse("home.html", {"request": request,"error": "Should only use A,C,T,G"})
     decoded_token=None
     email=None
     logged_in=False
@@ -198,11 +207,6 @@ async def get_result(request: Request, db: Session = Depends(get_db)):
         features = calculate_features(seq)
         result=model.predict(features)
         r=f"{features[0][0]},{features[0][1]},{features[0][2]},{features[0][3]},{features[0][4]},{result[0]}"
-        # if decoded_token:
-        #     sequence = models.Sequences(name=name, seq=value,
-        #                                 description=desc,result=r,
-        #                                 owner_id=email)
-        #     crud.create_seq(db=db, seq=sequence)
     else:
         seq=''
         features=[None]
@@ -290,54 +294,54 @@ async def history(request: Request, db: Session = Depends(get_db)):
 
 
 # ML model  
-@app.get("/submit")
-async def register_form(request: Request): 
-        return templates.TemplateResponse("form.html", {"request": request})
+# @app.get("/submit")
+# async def register_form(request: Request): 
+#         return templates.TemplateResponse("form.html", {"request": request})
 
-@app.post("/submit")
-async def submit_form(request: Request, db: Session = Depends(get_db)):
+# @app.post("/submit")
+# async def submit_form(request: Request, db: Session = Depends(get_db)):
       
-    data = await request.form()
-    value = data.get("rna").upper()
-    if value:
-        set_value = set(value)
-        rna_seq_poss = {'A','T','G','C'}
-        for s in set_value:
-            if s not in rna_seq_poss:
-                return templates.TemplateResponse("form.html", {"request": request,"error": "Should only use A,C,T,G"})
+#     data = await request.form()
+#     value = data.get("rna").upper()
+#     if value:
+#         set_value = set(value)
+#         rna_seq_poss = {'A','T','G','C'}
+#         for s in set_value:
+#             if s not in rna_seq_poss:
+#                 return templates.TemplateResponse("form.html", {"request": request,"error": "Should only use A,C,T,G"})
 
 
-    name = data.get("name")
-    desc = data.get("desc")
-    decoded_token=None
-    email=None
-    logged_in=False
-    access_token = request.cookies.get("access_token")
-    if access_token:
-        decoded_token = jwt.decode(access_token.split("Bearer ")[1],PASSWORD, algorithms=["HS256"])
-        email = decoded_token.get("sub")
-        logged_in=True
-    if value:
-        model_path = os.path.join(os.getcwd(), 'model.pkl')
-        model = pickle.load(open(model_path, 'rb'))
-        seq=value.translate({ord(c): None for c in string.whitespace})
-        features = calculate_features(seq)
-        result=model.predict(features)
-        r=f"{features[0][0]},{features[0][1]},{features[0][2]},{features[0][3]},{features[0][4]},{result[0]}"
-        if decoded_token:
-            sequence = models.Sequences(name=name, seq=value,
-                                        description=desc,result=r,
-                                        owner_id=email)
-            crud.create_seq(db=db, seq=sequence)
-    else:
-        seq=''
-        features=None
-        result=None
+#     name = data.get("name")
+#     desc = data.get("desc")
+#     decoded_token=None
+#     email=None
+#     logged_in=False
+#     access_token = request.cookies.get("access_token")
+#     if access_token:
+#         decoded_token = jwt.decode(access_token.split("Bearer ")[1],PASSWORD, algorithms=["HS256"])
+#         email = decoded_token.get("sub")
+#         logged_in=True
+#     if value:
+#         model_path = os.path.join(os.getcwd(), 'model.pkl')
+#         model = pickle.load(open(model_path, 'rb'))
+#         seq=value.translate({ord(c): None for c in string.whitespace})
+#         features = calculate_features(seq)
+#         result=model.predict(features)
+#         r=f"{features[0][0]},{features[0][1]},{features[0][2]},{features[0][3]},{features[0][4]},{result[0]}"
+#         if decoded_token:
+#             sequence = models.Sequences(name=name, seq=value,
+#                                         description=desc,result=r,
+#                                         owner_id=email)
+#             crud.create_seq(db=db, seq=sequence)
+#     else:
+#         seq=''
+#         features=None
+#         result=None
 
 
-    reply={"request": request,"text":value,'seq':seq,
-        'features':features,'result':result,"logged_in":logged_in}
-    return templates.TemplateResponse("form.html", reply)
+#     reply={"request": request,"text":value,'seq':seq,
+#         'features':features,'result':result,"logged_in":logged_in}
+#     return templates.TemplateResponse("form.html", reply)
 
 
 
