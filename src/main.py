@@ -84,9 +84,9 @@ async def register(request: Request, response: Response, db: Session = Depends(g
                         seq = decode_result["seq"]
                         result = decode_result["result"]
                         features = decode_result["features"]
-                        features=features.split(',')
+                        # features=features.split(',')
                         reply = {"seq": seq, "result": result, "features": features,"logged_in":True}
-    
+                        print("line 89",reply)
                         template = templates.get_template("save.html")
                         content = template.render(request=request, **reply)
 
@@ -164,10 +164,9 @@ async def save(request:Request):
     features = data['features']
     logged_in = (data.get('logged_in',logged_in) or logged_in)
     print(logged_in)
-    f=features.split(',')
     result = int(data['result'][1])
     print(result,type(result))
-    reply={"request": request,"seq":seq,"features":f,"f":features,"result":[result],"logged_in":logged_in}
+    reply={"request": request,"seq":seq,"features":features,"result":[result],"logged_in":logged_in}
     return templates.TemplateResponse("save.html", reply)
 
 @app.post("/add-db")
@@ -183,9 +182,14 @@ async def add_db(request: Request, db: Session = Depends(get_db)):
     name = data['name']
     desc = data['desc']
     features = data['features']
+    print(features,type(features))
+    print(value,name ,desc,features,"line 186")
     features=features.split(',')
-    p=data.get('result',features[5])
-    r=f"{features[0]},{features[1]},{features[2]},{features[3]},{features[4]},{p}"
+    print(features,type(features))
+    # p=data.get('result',None)
+    # features.append(p)
+    print(features,type(features))
+    r = f"{features[0]},{features[1]},{features[2]},{features[3]},{features[4]},{features[5]}"
     print(r)
     sequence = models.Sequences(name=name, seq=value,
                                 description=desc,result=r,
