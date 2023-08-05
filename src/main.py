@@ -99,30 +99,25 @@ async def logout(request: Request,response: Response):
     response.delete_cookie("access_token")
     return response
 
-# @app.get("/", response_class=HTMLResponse)
-# async def index(request: Request):
-#     access_token = request.cookies.get("access_token")
 
-#     if access_token:
-#         try:
-#             decoded_token = jwt.decode(access_token.split("Bearer ")[1],PASSWORD, algorithms=["HS256"])
-#             email = decoded_token.get("sub")
-#             # Perform additional checks or actions based on the email or other token data
+@app.post("/cache-data")
+async def cache_data(request: Request):
+    data = await request.form()
+    seq = data['seq']
+    result = data['result']
+    features = data['features']
+    print(seq,result,features)
 
-#             # User is logged in, show the home page
-#             reply= {"request": request, "logged_in": [True,email]}
-#         except:
-#             # Invalid token, user is not logged in
-#             reply= {"request": request, "logged_in": False}
-#         return templates.TemplateResponse("home.html",reply)
+    data = {"seq" : seq,"result":result[0],"features" : features}
+    jwt_token = jwt.encode(data, PASSWORD, algorithm="HS256")
+    response = RedirectResponse(url="/login", status_code=303)
+    response.set_cookie(key=f"RNA_Result", value=f"{jwt_token}", httponly=True)
+    
+    return response
 
-#     # No access token found, user is not logged in
-#     reply= {"request": request, "logged_in": False}
-#     return templates.TemplateResponse("home.html", reply)
 
-# @app.post("/")
-# async def index_post(request: Request):
-#     return RedirectResponse(url="/", status_code=303)
+
+
 
 @app.post("/save")
 async def save(request:Request):    
