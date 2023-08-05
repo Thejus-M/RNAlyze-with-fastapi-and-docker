@@ -84,7 +84,8 @@ async def register(request: Request, response: Response, db: Session = Depends(g
                         seq = decode_result["seq"]
                         result = decode_result["result"]
                         features = decode_result["features"]
-                        reply = {"seq": seq, "result": [int(result)], "features": features,"logged_in":True}
+                        features=features.split(',')
+                        reply = {"seq": seq, "result": result, "features": features,"logged_in":True}
     
                         template = templates.get_template("save.html")
                         content = template.render(request=request, **reply)
@@ -139,7 +140,7 @@ async def cache_data(request: Request):
     features = data['features']
     print(seq,result,features,"line 133")
 
-    data = {"seq" : seq,"result":result[1],"features" : features}
+    data = {"seq" : seq,"result":result[1],"features" : features,"logged_in":False}
     jwt_token = jwt.encode(data, PASSWORD, algorithm="HS256")
     response = RedirectResponse(url="/login", status_code=303)
     response.set_cookie(key="rna_result", value=f"Bearer {jwt_token}", httponly=True)
@@ -161,7 +162,7 @@ async def save(request:Request):
     data = await request.form()
     seq = data['seq']
     features = data['features']
-    logged_in = (data['logged_in'] or logged_in)
+    logged_in = (data.get('logged_in',logged_in) or logged_in)
     print(logged_in)
     f=features.split(',')
     result = int(data['result'][1])
@@ -183,7 +184,8 @@ async def add_db(request: Request, db: Session = Depends(get_db)):
     desc = data['desc']
     features = data['features']
     features=features.split(',')
-    r=f"{features[0]},{features[1]},{features[2]},{features[3]},{features[4]},{features[5]}"
+    p=data.get('result',features[5])
+    r=f"{features[0]},{features[1]},{features[2]},{features[3]},{features[4]},{p}"
     print(r)
     sequence = models.Sequences(name=name, seq=value,
                                 description=desc,result=r,
