@@ -1,15 +1,15 @@
 import os
 import pickle
-from re import template
 import string
 import bcrypt
 
+from fastapi.responses import HTMLResponse
 from fastapi import Depends, FastAPI, HTTPException, Request, Response
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from flask import redirect
 from jose import jwt
+import requests
 from sqlalchemy.orm import Session
 
 from . import crud, models, schemas
@@ -39,7 +39,7 @@ def logged_in(request):
     if access_token:
             decoded_token = jwt.decode(access_token.split("Bearer ")[1],PASSWORD, algorithms=["HS256"])
             email = decoded_token.get("sub")
-            return True
+            return True if email else False
     return False
 
 
@@ -49,7 +49,11 @@ async def register(request: Request, response: Response, db: Session = Depends(g
     success = []
     data = await request.form()
     login_email = data.get("email")
-    reg_email = data.get("email-in") 
+    reg_email = data.get("email-in")
+    if logged_in(request):
+        return RedirectResponse(url="/", status_code=303)
+
+
     if reg_email:
         # registration
         password = data.get("pswd-in")
@@ -62,10 +66,10 @@ async def register(request: Request, response: Response, db: Session = Depends(g
         return templates.TemplateResponse("login.html", {"request": request})
     else:
         # login/sign in
-        try:
+        # try:
             user = db.query(models.User).filter(models.User.email == login_email).first()
             if user is None:
-                error.append("Email does not exist")
+                error.append("Email does not exist !!")
                 reply = {"request": request, "error": error}
                 return templates.TemplateResponse('login.html', reply)
             else:
@@ -73,15 +77,41 @@ async def register(request: Request, response: Response, db: Session = Depends(g
                 if bcrypt.checkpw(password.encode(), user.hashed_password):
                     data = {"sub": login_email}
                     jwt_token = jwt.encode(data, PASSWORD, algorithm="HS256")
-                    response = RedirectResponse(url="/", status_code=303)
-                    response.set_cookie(key="access_token", value=f"Bearer {jwt_token}", httponly=True)
-                    return response
+
+                    rna_results = request.cookies.get(f"rna_result")
+                    if rna_results:
+                        decode_result = jwt.decode(rna_results.split("Bearer ")[1], PASSWORD, algorithms=["HS256"])
+                        seq = decode_result["seq"]
+                        result = decode_result["result"]
+                        features = decode_result["features"]
+                        # features=features.split(',')
+                        reply = {"seq": seq, "result": result, "features": features,"logged_in":True}
+                        print("line 89",reply)
+                        template = templates.get_template("save.html")
+                        content = template.render(request=request, **reply)
+
+                        response = HTMLResponse(content)
+
+                        # response = HTMLResponse(content=templates.TemplateResponse("save.html", {"request": request,**reply}))
+                        response.set_cookie(key="access_token", value=f"Bearer {jwt_token}", httponly=True)
+                        response.delete_cookie("rna_result")
+                        return response
+                        # return templates.TemplateResponse('login.html', {"request": request, **reply} )
+                    else:
+                        return RedirectResponse(url="/", status_code=303)
+
+                    # response = RedirectResponse(url="/login", status_code=303)
+                    # response.set_cookie(key="access_token", value=f"Bearer {jwt_token}", httponly=True)
+                    # return response
+
+
+                        
                 else:
                     error.append("Invalid password")
-        except:  
-            error.append("Unexpected error!!!")
-            reply = {"request": request, "error": error}
-            return templates.TemplateResponse('login.html', reply)
+        # except:  
+        #     error.append("Unexpected error!!!")
+        #     reply = {"request": request, "error": error}
+        #     return templates.TemplateResponse('login.html', reply)
 
         
 
@@ -101,30 +131,25 @@ async def logout(request: Request,response: Response):
     response.delete_cookie("access_token")
     return response
 
-# @app.get("/", response_class=HTMLResponse)
-# async def index(request: Request):
-#     access_token = request.cookies.get("access_token")
 
-#     if access_token:
-#         try:
-#             decoded_token = jwt.decode(access_token.split("Bearer ")[1],PASSWORD, algorithms=["HS256"])
-#             email = decoded_token.get("sub")
-#             # Perform additional checks or actions based on the email or other token data
+@app.post("/cache-data")
+async def cache_data(request: Request):
+    data = await request.form()
+    seq = data['seq']
+    result = data['result']
+    features = data['features']
+    print(seq,result,features,"line 133")
 
-#             # User is logged in, show the home page
-#             reply= {"request": request, "logged_in": [True,email]}
-#         except:
-#             # Invalid token, user is not logged in
-#             reply= {"request": request, "logged_in": False}
-#         return templates.TemplateResponse("home.html",reply)
+    data = {"seq" : seq,"result":result[1],"features" : features,"logged_in":False}
+    jwt_token = jwt.encode(data, PASSWORD, algorithm="HS256")
+    response = RedirectResponse(url="/login", status_code=303)
+    response.set_cookie(key="rna_result", value=f"Bearer {jwt_token}", httponly=True)
+    
+    return response
 
-#     # No access token found, user is not logged in
-#     reply= {"request": request, "logged_in": False}
-#     return templates.TemplateResponse("home.html", reply)
 
-# @app.post("/")
-# async def index_post(request: Request):
-#     return RedirectResponse(url="/", status_code=303)
+
+
 
 @app.post("/save")
 async def save(request:Request):    
@@ -137,9 +162,11 @@ async def save(request:Request):
     data = await request.form()
     seq = data['seq']
     features = data['features']
-    f=features.split(',')
-    result = data['result']
-    reply={"request": request,"seq":seq,"features":f,"f":features,"result":result,"logged_in":logged_in}
+    logged_in = (data.get('logged_in',logged_in) or logged_in)
+    print(logged_in)
+    result = int(data['result'][1])
+    print(result,type(result))
+    reply={"request": request,"seq":seq,"features":features,"result":[result],"logged_in":logged_in}
     return templates.TemplateResponse("save.html", reply)
 
 @app.post("/add-db")
@@ -155,10 +182,14 @@ async def add_db(request: Request, db: Session = Depends(get_db)):
     name = data['name']
     desc = data['desc']
     features = data['features']
+    print(features,type(features))
+    print(value,name ,desc,features,"line 186")
     features=features.split(',')
-    result = data['result']
-    print(result[0])
-    r=f"{features[0]},{features[1]},{features[2]},{features[3]},{features[4]},{result[0]}"
+    print(features,type(features))
+    # p=data.get('result',None)
+    # features.append(p)
+    print(features,type(features))
+    r = f"{features[0]},{features[1]},{features[2]},{features[3]},{features[4]},{features[5]}"
     print(r)
     sequence = models.Sequences(name=name, seq=value,
                                 description=desc,result=r,

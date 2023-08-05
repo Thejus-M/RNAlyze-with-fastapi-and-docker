@@ -145,9 +145,9 @@
         
                     <h3>The Sequences is a
                         {% if result.0 == 0 %}
-                        Non coding RNA
+                        Non coding RNA({{result.0}})
                         {% else %}
-                        Coding RNA
+                        Coding RNA({{result.0}})
                         {% endif %}
         
                     </h3>
@@ -162,9 +162,17 @@
 
 <div class="button-container">
     <span class="noCssReinstallServiceWorker" onclick="reinstallServiceWorker()">
-        <a href="{{ url_for('login')}}" style="color: #d1d0c5; opacity: 0.7; text-decoration: none;">
+        <!-- <a href="{{ url_for('login')}}" style="color: #d1d0c5; opacity: 0.7; text-decoration: none;">
             Sign in to save your result
-        </a>
+        </a> -->
+        <form action="{{ url_for('cache_data')}}" method="POST">
+            <div class="" style="display: none;">
+                <textarea name="seq" id="" cols="30" rows="10">{{seq}}</textarea>
+                <textarea name="features" id="" cols="30" rows="10">{{r}}</textarea>
+                <textarea name="result" id="" cols="30" rows="10">{{result}}</textarea>
+            </div>
+            <input type="submit" value="Sign in to save your result" style="color: #d1d0c5;font-size: larger;font-weight: bold; opacity: 0.7; text-decoration: none; background: none; border: none; cursor: pointer;">
+        </form>
     </span>
 </div>
 
