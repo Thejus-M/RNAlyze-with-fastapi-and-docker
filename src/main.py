@@ -3,11 +3,13 @@ import pickle
 import string
 import bcrypt
 
+from fastapi.responses import HTMLResponse
 from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from jose import jwt
+import requests
 from sqlalchemy.orm import Session
 
 from . import crud, models, schemas
@@ -37,7 +39,7 @@ def logged_in(request):
     if access_token:
             decoded_token = jwt.decode(access_token.split("Bearer ")[1],PASSWORD, algorithms=["HS256"])
             email = decoded_token.get("sub")
-            return True
+            return True if email else False
     return False
 
 
@@ -47,7 +49,11 @@ async def register(request: Request, response: Response, db: Session = Depends(g
     success = []
     data = await request.form()
     login_email = data.get("email")
-    reg_email = data.get("email-in") 
+    reg_email = data.get("email-in")
+    if logged_in(request):
+        return RedirectResponse(url="/", status_code=303)
+
+
     if reg_email:
         # registration
         password = data.get("pswd-in")
@@ -60,10 +66,10 @@ async def register(request: Request, response: Response, db: Session = Depends(g
         return templates.TemplateResponse("login.html", {"request": request})
     else:
         # login/sign in
-        try:
+        # try:
             user = db.query(models.User).filter(models.User.email == login_email).first()
             if user is None:
-                error.append("Email does not exist")
+                error.append("Email does not exist !!")
                 reply = {"request": request, "error": error}
                 return templates.TemplateResponse('login.html', reply)
             else:
@@ -71,15 +77,40 @@ async def register(request: Request, response: Response, db: Session = Depends(g
                 if bcrypt.checkpw(password.encode(), user.hashed_password):
                     data = {"sub": login_email}
                     jwt_token = jwt.encode(data, PASSWORD, algorithm="HS256")
-                    response = RedirectResponse(url="/", status_code=303)
-                    response.set_cookie(key="access_token", value=f"Bearer {jwt_token}", httponly=True)
-                    return response
+
+                    rna_results = request.cookies.get(f"rna_result")
+                    if rna_results:
+                        decode_result = jwt.decode(rna_results.split("Bearer ")[1], PASSWORD, algorithms=["HS256"])
+                        seq = decode_result["seq"]
+                        result = decode_result["result"]
+                        features = decode_result["features"]
+                        reply = {"seq": seq, "result": [int(result)], "features": features,"logged_in":True}
+    
+                        template = templates.get_template("save.html")
+                        content = template.render(request=request, **reply)
+
+                        response = HTMLResponse(content)
+
+                        # response = HTMLResponse(content=templates.TemplateResponse("save.html", {"request": request,**reply}))
+                        response.set_cookie(key="access_token", value=f"Bearer {jwt_token}", httponly=True)
+                        response.delete_cookie("rna_result")
+                        return response
+                        # return templates.TemplateResponse('login.html', {"request": request, **reply} )
+                    else:
+                        return RedirectResponse(url="/", status_code=303)
+
+                    # response = RedirectResponse(url="/login", status_code=303)
+                    # response.set_cookie(key="access_token", value=f"Bearer {jwt_token}", httponly=True)
+                    # return response
+
+
+                        
                 else:
                     error.append("Invalid password")
-        except:  
-            error.append("Unexpected error!!!")
-            reply = {"request": request, "error": error}
-            return templates.TemplateResponse('login.html', reply)
+        # except:  
+        #     error.append("Unexpected error!!!")
+        #     reply = {"request": request, "error": error}
+        #     return templates.TemplateResponse('login.html', reply)
 
         
 
@@ -106,12 +137,12 @@ async def cache_data(request: Request):
     seq = data['seq']
     result = data['result']
     features = data['features']
-    print(seq,result,features)
+    print(seq,result,features,"line 133")
 
-    data = {"seq" : seq,"result":result[0],"features" : features}
+    data = {"seq" : seq,"result":result[1],"features" : features}
     jwt_token = jwt.encode(data, PASSWORD, algorithm="HS256")
     response = RedirectResponse(url="/login", status_code=303)
-    response.set_cookie(key=f"RNA_Result", value=f"{jwt_token}", httponly=True)
+    response.set_cookie(key="rna_result", value=f"Bearer {jwt_token}", httponly=True)
     
     return response
 
@@ -130,6 +161,8 @@ async def save(request:Request):
     data = await request.form()
     seq = data['seq']
     features = data['features']
+    logged_in = (data['logged_in'] or logged_in)
+    print(logged_in)
     f=features.split(',')
     result = int(data['result'][1])
     print(result,type(result))
