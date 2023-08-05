@@ -107,8 +107,7 @@
 <form action="/add-db" method="post">
     <div class="result">
         <h1>To Save</h1><br>
-        <textarea name="name" id="" cols="30" rows="2">
-        </textarea>
+        <textarea name="name" id="" cols="30" rows="2"></textarea>
         <textarea name="desc" id="" cols="30" rows="4"></textarea>
         <textarea name="seq" id="" cols="30" rows="10" readonly>{{seq}}</textarea>
         <textarea name="features" id="" cols="30" rows="10" style="display: none;">{{f}}</textarea>
@@ -151,10 +150,10 @@
                 <div class="value">
         
                     <h3>The Sequences is a
-                        {% if result == 0 %}
-                        Non coding RNA
+                        {% if result.0 == 0 %}
+                        Non coding RNA ({{result.0}})
                         {% else %}
-                        Coding RNA
+                        Coding RNA ({{result.0}})
                         {% endif %}
         
                     </h3>

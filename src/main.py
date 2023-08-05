@@ -1,14 +1,12 @@
 import os
 import pickle
-from re import template
 import string
 import bcrypt
 
 from fastapi import Depends, FastAPI, HTTPException, Request, Response
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from flask import redirect
 from jose import jwt
 from sqlalchemy.orm import Session
 
@@ -138,8 +136,9 @@ async def save(request:Request):
     seq = data['seq']
     features = data['features']
     f=features.split(',')
-    result = data['result']
-    reply={"request": request,"seq":seq,"features":f,"f":features,"result":result,"logged_in":logged_in}
+    result = int(data['result'][1])
+    print(result,type(result))
+    reply={"request": request,"seq":seq,"features":f,"f":features,"result":[result],"logged_in":logged_in}
     return templates.TemplateResponse("save.html", reply)
 
 @app.post("/add-db")
@@ -156,9 +155,7 @@ async def add_db(request: Request, db: Session = Depends(get_db)):
     desc = data['desc']
     features = data['features']
     features=features.split(',')
-    result = data['result']
-    print(result[0])
-    r=f"{features[0]},{features[1]},{features[2]},{features[3]},{features[4]},{result[0]}"
+    r=f"{features[0]},{features[1]},{features[2]},{features[3]},{features[4]},{features[5]}"
     print(r)
     sequence = models.Sequences(name=name, seq=value,
                                 description=desc,result=r,

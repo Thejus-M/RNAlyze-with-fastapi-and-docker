@@ -99,20 +99,18 @@
     
     <div class="result">
         <h1>Details</h1><br>
-        <textarea name="name" id="" cols="30" rows="2">
-            {{history.0.name}}
-        </textarea>
+        <textarea name="name" id="" cols="30" rows="2">{{history.0.name}}       </textarea>
         <textarea name="desc" id="" cols="30" rows="4">{{history.0.description}}</textarea>
         <textarea name="seq" id="" cols="30" rows="10">{{history.0.seq}}</textarea>
         <h2>
     
+            {% if value %}
             <table>
                 <thead>
                     <th>Features</th>
                     <th>Values</th>
                 </thead>
                 <tbody>
-                    {% if value %}
                     <tr>
                         <td>Orf Length</td>
                         <td>{{value.0|truncate(4,True,'')}}</td>
@@ -132,24 +130,23 @@
                     <tr>
                         <td>Fickett Score</td>
                         <td>{{value.4|truncate(4,True,'')}}</td>
-                    {% endif %}
-                </tbody>
-                
+                    </tbody>
+                    
             </table>
             <br><br>
-                <div class="value">
-                    {{features}}
-        
-                    <h3>The Sequences is a
-                        {% if value.5 == 0 %}
-                        Non coding RNA
-                        {% else %}
-                        Coding RNA
-                        {% endif %}
-        
-                    </h3>
+            <div class="value">
+                
+                <h3>The Sequences is a
+                    {% if value.5 == '0.0' %}
+                    Non coding RNA ({{value.5}})
+                    {% else %}
+                    Coding RNA ({{value.5}})
+                    {% endif %}
+                    
+                </h3>
                 <br><br>
             </div>
+            {% endif %}
 
 
             <!-- <div class="">
