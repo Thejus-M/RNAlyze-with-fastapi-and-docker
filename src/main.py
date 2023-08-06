@@ -66,7 +66,7 @@ async def register(request: Request, response: Response, db: Session = Depends(g
         return templates.TemplateResponse("login.html", {"request": request})
     else:
         # login/sign in
-        # try:
+        try:
             user = db.query(models.User).filter(models.User.email == login_email).first()
             if user is None:
                 error.append("Email does not exist !!")
@@ -83,9 +83,9 @@ async def register(request: Request, response: Response, db: Session = Depends(g
                         decode_result = jwt.decode(rna_results.split("Bearer ")[1], PASSWORD, algorithms=["HS256"])
                         seq = decode_result["seq"]
                         result = decode_result["result"]
-                        features = decode_result["features"]
-                        # features=features.split(',')
-                        reply = {"seq": seq, "result": result, "features": features,"logged_in":True}
+                        f = decode_result["features"]
+                        features=f.split(',')
+                        reply = {"seq": seq, "result": result, "features": features,"f":f,"logged_in":True}
                         print("line 89",reply)
                         template = templates.get_template("save.html")
                         content = template.render(request=request, **reply)
@@ -98,20 +98,22 @@ async def register(request: Request, response: Response, db: Session = Depends(g
                         return response
                         # return templates.TemplateResponse('login.html', {"request": request, **reply} )
                     else:
-                        return RedirectResponse(url="/", status_code=303)
+                        # return RedirectResponse(url="/", status_code=303)
 
-                    # response = RedirectResponse(url="/login", status_code=303)
-                    # response.set_cookie(key="access_token", value=f"Bearer {jwt_token}", httponly=True)
-                    # return response
+                        response = RedirectResponse(url="/", status_code=303)
+                        response.set_cookie(key="access_token", value=f"Bearer {jwt_token}", httponly=True)
+                        return response
 
 
                         
                 else:
                     error.append("Invalid password")
-        # except:  
-        #     error.append("Unexpected error!!!")
-        #     reply = {"request": request, "error": error}
-        #     return templates.TemplateResponse('login.html', reply)
+                    reply = {"request": request, "error": error}
+                    return templates.TemplateResponse('login.html', reply)
+        except:  
+            error.append("Unexpected error!!!")
+            reply = {"request": request, "error": error}
+            return templates.TemplateResponse('login.html', reply)
 
         
 
@@ -162,11 +164,13 @@ async def save(request:Request):
     data = await request.form()
     seq = data['seq']
     features = data['features']
+    print(features,type(features))
+    f = features.split(',')
     logged_in = (data.get('logged_in',logged_in) or logged_in)
-    print(logged_in)
+    print(features)
     result = int(data['result'][1])
     print(result,type(result))
-    reply={"request": request,"seq":seq,"features":features,"result":[result],"logged_in":logged_in}
+    reply={"request": request,"seq":seq,"features":f,"result":[result],"logged_in":logged_in,"f":features}
     return templates.TemplateResponse("save.html", reply)
 
 @app.post("/add-db")

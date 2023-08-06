@@ -8,9 +8,25 @@
     <link rel="icon" href="/static/img/rna.png" type="image/icon type">
     
     <link rel="stylesheet" href="/static/css/login.css">
+
 </head>
 <body>
-    {{error}}
+    
+    {% for e in error %}
+    <label class="error_box">
+        <input type="checkbox" class="alertCheckbox" autocomplete="off" />
+        <div class="alert error">
+            <span class="alertClose">
+                <!-- <box-icon name='info-circle' animation='tada'  ></box-icon> -->
+                <box-icon name='x-circle' type='solid' color='#ce0000' animation='tada'></box-icon>
+            </span>
+            <span class="alertText">
+                {{e}}
+                <br class="clear" /></span>
+        </div>
+    </label>
+    {% endfor %}
+        
     <div id="container" class="container">
         <!-- FORM SECTION -->
         <div class="row">
