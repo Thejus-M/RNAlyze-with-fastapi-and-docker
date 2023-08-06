@@ -273,6 +273,37 @@ async def delete_item(item_id: int, db: Session = Depends(get_db)):
         return RedirectResponse(url='/history')
     else:
         return {"message": "Item not found"}
+    
+
+@app.post("/edit-his/{item_id}")
+async def edit_his(request: Request,item_id: int, db: Session = Depends(get_db)):
+    print("post edit-his")
+    item = db.query(models.Sequences).filter(models.Sequences.id == item_id).first()
+    data = await request.form()
+    if item and data:
+        item.name = data['name']
+        item.description = data['desc']
+        db.commit()
+        return RedirectResponse(url='/history', status_code=302)
+    else:
+        return {"message": "Item not found"}
+
+@app.get("/edit-his/{item_id}")
+async def edit_his(request: Request,item_id: int, db: Session = Depends(get_db)):
+    access_token = request.cookies.get("access_token")
+    logged_in=False
+    history_detail=None
+    value=None
+    if access_token:
+        decoded_token = jwt.decode(access_token.split("Bearer ")[1], PASSWORD, algorithms=["HS256"])
+        email = decoded_token.get("sub")
+        logged_in=True
+        history_detail = db.query(models.Sequences).filter(models.Sequences.id == item_id)
+        if history_detail[0].result:
+            value=history_detail[0].result.split(",")
+    reply={"request": request,"history":history_detail,"logged_in":logged_in,"value":value,"edit":True,"item_id":item_id}
+    print(reply,"line 304")
+    return templates.TemplateResponse("detail.html", reply)
 
 @app.get("/about")
 async def about(request: Request):
@@ -292,7 +323,7 @@ async def details(request: Request,user_id: int,  db: Session = Depends(get_db))
             history_detail = db.query(models.Sequences).filter(models.Sequences.id == user_id)
             if history_detail[0].result:
                 value=history_detail[0].result.split(",")
-        reply={"request": request,"history":history_detail,"logged_in":logged_in,"value":value}
+        reply={"request": request,"history":history_detail,"logged_in":logged_in,"value":value,"edit":False,"item_id":user_id}
         return templates.TemplateResponse("detail.html", reply)
     
 
