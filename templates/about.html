@@ -9,6 +9,466 @@
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous" />
     <link rel="icon" href="/static/img/rna.png" type="image/icon type">
+
+    
+  <style>
+    body {
+      margin: 0;
+      background-color: #fff8d6;
+    }
+    
+    
+    .heading {
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .team-section {
+
+    margin-top: 100px;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .team-member {
+      margin: 10px;
+    }
+    
+    .team-member img {
+      width: 400px;
+      height: 500px;
+      object-fit: cover;
+      filter: grayscale(100%);
+    }
+    
+    .team-member span {
+      display: block;
+      text-align: center;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+
+
+
+
+
+    .logo img{
+  /* margin-top: 40px; */
+  margin-top: 1rem;
+  height: 70px;
+  align-items: center;
+}
+
+.html {
+  font-size: 62.5%;
+}
+
+.navbar input[type="checkbox"],
+.navbar .hamburger-lines {
+  display: none;
+}
+
+.container {
+  max-width: 1800px;
+  width: 90%;
+  margin: auto;
+}
+
+.navbar {
+  position: fixed;
+  width: 100%;
+  background: #fff8d6;
+  color: #fff8d6;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  margin-right: 10px;
+}
+
+
+.info-icon{
+  padding-left: 10px;
+  opacity: 0.8;
+}
+
+
+.description-dialog {
+  position: absolute;
+  top: 100%; /* Position the dialog below the logo */
+  left: 350px;
+  width: 300px; /* Adjust the dialog width as needed */
+  padding: 10px;
+  background-color: #F7FFE5; /* Adjust the dialog background color */
+  color: #263A29; /* Adjust the dialog text color */
+  border: 1px solid #000000; /* Adjust the dialog border */
+  border-radius: 5px;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0.3s, opacity 0.3s;
+}
+
+.info-icon:hover .description-dialog {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+
+
+
+
+
+
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100px;
+}
+
+.menu-items {
+  margin-top: 0.5rem;
+  order: 2;
+  display: flex;
+  flex-grow: 1;
+
+  justify-content: center;
+}
+
+.menu-items li {
+  margin-top: 1rem;
+  margin-right: 80px;
+  display: flex;
+  
+  /* justify-content: center; */
+  /* padding-right: 80px; */
+
+}
+
+/* .menu-items li:hover {
+  text-decoration: underline;
+  margin-top: 2px;  
+} */
+
+
+
+/* .menu-items li:not(:last-child) {
+  margin-right: 6rem; 
+} */
+
+.menu-items li a{
+  font-size: 25px;
+  /* color: #; */
+  font-family: 'Courier New', Courier, monospace;
+  color: #11201e;
+  font-weight: bold;
+}
+
+
+.menu-items li a:hover{
+  font-size: 25px;
+  /* color: #; */
+  font-family: 'Courier New', Courier, monospace;
+  color: #11201e;
+  font-size: 30px;
+}
+
+
+/* .menu-items li::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #fff; 
+  transition: width 0.3s ease;
+}
+
+.menu-items li:hover::after {
+  width: 100%;
+} */
+
+
+
+.menu-items li.line-below::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  text-decoration: underline;
+  /* width: 100%;
+  height: 2px;
+  background-color: #fff; 
+  transform: scaleX(0);
+  transition: transform 0.3s ease; */
+}
+
+
+
+
+.menu-items li.line-below:hover::after {
+  transform: scaleX(1);
+}
+
+
+.login-button {
+  display: inline-block;
+  border: 2px solid #11201e;
+  transition: border-color 0.3s ease;
+  margin-left: auto; /* Adjust to position the login button at the end */
+  order: 3;
+  margin-top: 1rem;
+}
+
+.login-button a {
+  display: inline-block;
+  padding: 10px 20px;
+  /* border-radius: 5px; */
+  background-color: transparent;
+  color: #000000;
+  font-size: 25px;
+  font-family: 'Courier New', Courier, monospace;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+}
+
+.login-button:hover {
+  background-color: #11201e;
+}
+
+.login-button:hover a {
+  /* background-color: #fff8d6; */
+  color:  #fff8d6;
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* .logo {
+  order: 1;
+  font-size: 1.8rem;
+} */
+
+.menu-items li,
+button {
+  list-style: none;
+  margin-left: 1.5rem;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+}
+
+/* .navbar a {
+  color: #c9e7ee;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease-in-out;
+} */
+
+button {
+  padding: 8px 19px;
+  margin-right: 20px;
+  background-color: rgba(0, 136, 169, 1);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all ease-in-out 0s;
+}
+
+button:hover a {
+  color: #6ba7b6;
+}
+
+button:hover {
+  background: #fff;
+  color: #6cb1c2;
+}
+
+/* .navbar a:hover {
+  color: #5db3c9;
+} */
+
+@media (max-width: 768px) {
+  .navbar-container input[type="checkbox"],
+  .navbar-container .hamburger-lines {
+    display: block;
+  }
+
+  .navbar-container {
+    display: block;
+    position: relative;
+    height: 64px;
+  }
+
+  .navbar-container input[type="checkbox"] {
+    position: absolute;
+    display: block;
+    height: 32px;
+    width: 30px;
+    top: 20px;
+    left: 20px;
+    z-index: 5;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .navbar-container .hamburger-lines {
+    display: block;
+    height: 28px;
+    width: 35px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .navbar-container .hamburger-lines .line {
+    display: block;
+    height: 4px;
+    width: 100%;
+    border-radius: 10px;
+    background: #fff;
+  }
+
+  .navbar-container .hamburger-lines .line1 {
+    transform-origin: 0% 0%;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .navbar-container .hamburger-lines .line2 {
+    transition: transform 0.1s ease-in-out;
+  }
+
+  .navbar-container .hamburger-lines .line3 {
+    transform-origin: 0% 100%;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .navbar .menu-items {
+    padding-top: 100px;
+    background: #24252a;
+    height: 100vh;
+    max-width: 300px;
+    transform: translate(-150%);
+    display: flex;
+    flex-direction: column;
+    margin-left: -40px;
+    padding-left: 40px;
+    transition: transform 0.5s ease-in-out;
+    overflow: scroll;
+  }
+
+  .navbar .menu-items li {
+    margin-bottom: 1.8rem;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  button {
+    width: fit-content;
+    margin-left: 1rem;
+  }
+
+  .logo {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    font-size: 1.7rem;
+  }
+
+  .navbar-container input[type="checkbox"]:checked ~ .menu-items {
+    transform: translateX(0);
+  }
+
+  .navbar-container input[type="checkbox"]:checked ~ .hamburger-lines .line1 {
+    transform: rotate(45deg);
+  }
+
+  .navbar-container input[type="checkbox"]:checked ~ .hamburger-lines .line2 {
+    transform: scaleY(0);
+  }
+
+  .navbar-container input[type="checkbox"]:checked ~ .hamburger-lines .line3 {
+    transform: rotate(-45deg);
+  }
+}
+
+@media (max-width: 500px) {
+  .navbar-container input[type="checkbox"]:checked ~ .logo {
+    display: none;
+  }
+}
+
+
+
+
+
+
+.menu-items li.line-below::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  text-decoration: underline;
+  /* width: 100%;
+  height: 2px;
+  background-color: #fff; 
+  transform: scaleX(0);
+  transition: transform 0.3s ease; */
+}
+
+
+.menu-items li.line-below:hover::after {
+  transform: scaleX(1);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  </style>
+
+
     <script type="text/javascript">
         WebFont.load({
             google: {
@@ -76,9 +536,9 @@
         <div class="logo-container">
     
         </div>
-        <div class="new_nav_container w-container"><img src="/static/img/logodark1.png" loading="lazy"
-                sizes="(max-width: 479px) 100vw, 244.96875px" height="48" srcset="" alt="" class="image-263" /><a
-                href="{{ url_for('index')}}" class="outlined_rounded_button w-button"><strong>Try RNAlyze</strong></a></div>
+        <div class="new_nav_container w-container">
+            <img src="/static/img/logodark1.png" loading="lazy" sizes="(max-width: 479px) 100vw, 244.96875px" height="48" srcset="" alt="" class="image-263" />
+            <a href="{{ url_for('index')}}" class="outlined_rounded_button w-button"><strong>Try RNAlyze</strong></a></div>
     </div>
     <div class="section-20 wf-section">
         <div class="container-27 w-container">
@@ -94,10 +554,13 @@
                 </div><a href="{{ url_for('index')}}" target="_blank" class="centered-button black landing w-button">Try RNAlyze</a>
             </div>
             <div class="div-block-32"></div>
+
+          <a href="{{ url_for('index') }}">
             <img src="/static/img/firstimage.jpg" loading="lazy" width="1228"
                 sizes="(max-width: 479px) 100vw, (max-width: 991px) 80vw, 940px"
                 srcset="static/img/firstimage.jpg 500w, static/img/firstimage.jpg 800w, static/img/firstimage.jpg 1080w, static/img/firstimage.jpg 2000w" alt=""
                 class="image-118" />
+          </a>
         </div>
     </div>
     <div class="highlight-features wf-section">
@@ -162,7 +625,7 @@
                     <p class="paragraph-46"> <strong>By utilizing RNAlyze, researchers can gain valuable insights into the functional properties of their RNA sequences, enhancing their understanding of gene expression and protein synthesis.</p>
                     </strong>
                 </div>
-                <div class="div-block-51"><img src="/static/img/image4-removebg-preview.png" loading="lazy" width="495" sizes="(max-width: 479px) 100vw, (max-width: 767px) 80vw, (max-width: 991px) 44vw, (max-width: 1919px) 40vw, 495px" 
+                <div class="div-block-51"><img style="filter: grayscale(100%);" src="/static/img/image4-removebg-preview.png" loading="lazy" width="495" sizes="(max-width: 479px) 100vw, (max-width: 767px) 80vw, (max-width: 991px) 44vw, (max-width: 1919px) 40vw, 495px" 
                         alt="img" 
                         class="image-36" /></div>
             </div>
@@ -170,7 +633,8 @@
     </div>
     </div>
     <div class="section-103 wf-section">
-        <div class="new_nav_container w-container"><img src="/static/img/images/logoblack.png" loading="lazy" sizes="(max-width: 479px) 100vw, 244.96875px" height="48" srcset=""
+        <div class="new_nav_container w-container">
+            <img src="/static/img/logod1.png" loading="lazy" sizes="(max-width: 479px) 100vw, 244.96875px" height="48" srcset=""
                 alt="" class="image-263" /><a href="{{ url_for('index')}}" class="outlined_rounded_button w-button"><strong>Try RNAlyze</strong></a></div>
     </div>
     <script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=6143afec68f55570f449ef97" type="text/javascript" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>

@@ -63,7 +63,9 @@
     </div>
     <div class="logo-container">
     <div class="logo">
-        <img src="/static/img/llogo1.png" alt="Logo">
+        <a href="{{ url_for('index') }}">
+            <img src="/static/img/llogo1.png" alt="Logo">
+        </a>
         
         
     </div>
@@ -95,16 +97,16 @@
 <br><br><br><br><br><br>
 <div class="container">
 
-  
-    
-    <div class="result">
-        <h1>Details</h1><br>
-        <textarea name="name" id="" cols="30" rows="2">{{history.0.name}}       </textarea>
-        <textarea name="desc" id="" cols="30" rows="4">{{history.0.description}}</textarea>
-        <textarea name="seq" id="" cols="30" rows="10">{{history.0.seq}}</textarea>
+<div class="result">
+    <h1>Details</h1><br>
+    <form action="/edit-his/{{item_id}}" method="post">
+
+        <textarea name="name" id="" cols="30" rows="2" {% if not edit %} readonly {% endif %}>{{history.0.name}}</textarea>
+        <textarea name="desc" id="" cols="30" rows="4" {% if not edit %} readonly {% endif %}>{{history.0.description}}</textarea>
+        <textarea name="seq" id="" cols="30" rows="10" readonly>{{history.0.seq}}</textarea>
         <h2>
-    
             {% if value %}
+            <br><br>
             <table>
                 <thead>
                     <th>Features</th>
@@ -114,48 +116,51 @@
                     <tr>
                         <td>Orf Length</td>
                         <td>{{value.0|truncate(4,True,'')}}</td>
-                    
+
                     <tr>
                         <td>GC Content</td>
                         <td>{{value.1|truncate(4,True,'')}}</td>
-                    
+
                     <tr>
                         <td>Transcript Length</td>
                         <td>{{value.2|truncate(4,True,'')}}</td>
-                    
+
                     <tr>
                         <td>CPG Island</td>
                         <td>{{value.3|truncate(4,True,'')}}</td>
-                    
+
                     <tr>
                         <td>Fickett Score</td>
                         <td>{{value.4|truncate(4,True,'')}}</td>
-                    </tbody>
-                    
+                </tbody>
+
             </table>
             <br><br>
             <div class="value">
-                
+
                 <h3>The Sequences is a
                     {% if value.5 == '0.0' %}
                     Non coding RNA ({{value.5}})
                     {% else %}
                     Coding RNA ({{value.5}})
                     {% endif %}
-                    
+
                 </h3>
                 <br><br>
             </div>
             {% endif %}
 
-
+            {% if edit %} 
+            <button type="submit">Update</button>
+            {% endif %}
             <!-- <div class="">
                 <button>Update</button>
                 <button>Delete</button>
             </div> -->
+    </form>
+
 
 </div>
-
 
 
 <footer>

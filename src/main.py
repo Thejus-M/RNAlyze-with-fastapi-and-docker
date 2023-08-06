@@ -66,7 +66,7 @@ async def register(request: Request, response: Response, db: Session = Depends(g
         return templates.TemplateResponse("login.html", {"request": request})
     else:
         # login/sign in
-        # try:
+        try:
             user = db.query(models.User).filter(models.User.email == login_email).first()
             if user is None:
                 error.append("Email does not exist !!")
@@ -83,9 +83,9 @@ async def register(request: Request, response: Response, db: Session = Depends(g
                         decode_result = jwt.decode(rna_results.split("Bearer ")[1], PASSWORD, algorithms=["HS256"])
                         seq = decode_result["seq"]
                         result = decode_result["result"]
-                        features = decode_result["features"]
-                        # features=features.split(',')
-                        reply = {"seq": seq, "result": result, "features": features,"logged_in":True}
+                        f = decode_result["features"]
+                        features=f.split(',')
+                        reply = {"seq": seq, "result": result, "features": features,"f":f,"logged_in":True}
                         print("line 89",reply)
                         template = templates.get_template("save.html")
                         content = template.render(request=request, **reply)
@@ -98,20 +98,22 @@ async def register(request: Request, response: Response, db: Session = Depends(g
                         return response
                         # return templates.TemplateResponse('login.html', {"request": request, **reply} )
                     else:
-                        return RedirectResponse(url="/", status_code=303)
+                        # return RedirectResponse(url="/", status_code=303)
 
-                    # response = RedirectResponse(url="/login", status_code=303)
-                    # response.set_cookie(key="access_token", value=f"Bearer {jwt_token}", httponly=True)
-                    # return response
+                        response = RedirectResponse(url="/", status_code=303)
+                        response.set_cookie(key="access_token", value=f"Bearer {jwt_token}", httponly=True)
+                        return response
 
 
                         
                 else:
                     error.append("Invalid password")
-        # except:  
-        #     error.append("Unexpected error!!!")
-        #     reply = {"request": request, "error": error}
-        #     return templates.TemplateResponse('login.html', reply)
+                    reply = {"request": request, "error": error}
+                    return templates.TemplateResponse('login.html', reply)
+        except:  
+            error.append("Unexpected error!!!")
+            reply = {"request": request, "error": error}
+            return templates.TemplateResponse('login.html', reply)
 
         
 
@@ -162,11 +164,13 @@ async def save(request:Request):
     data = await request.form()
     seq = data['seq']
     features = data['features']
+    print(features,type(features))
+    f = features.split(',')
     logged_in = (data.get('logged_in',logged_in) or logged_in)
-    print(logged_in)
+    print(features)
     result = int(data['result'][1])
     print(result,type(result))
-    reply={"request": request,"seq":seq,"features":features,"result":[result],"logged_in":logged_in}
+    reply={"request": request,"seq":seq,"features":f,"result":[result],"logged_in":logged_in,"f":features}
     return templates.TemplateResponse("save.html", reply)
 
 @app.post("/add-db")
@@ -273,6 +277,37 @@ async def delete_item(item_id: int, db: Session = Depends(get_db)):
         return RedirectResponse(url='/history')
     else:
         return {"message": "Item not found"}
+    
+
+@app.post("/edit-his/{item_id}")
+async def edit_his(request: Request,item_id: int, db: Session = Depends(get_db)):
+    print("post edit-his")
+    item = db.query(models.Sequences).filter(models.Sequences.id == item_id).first()
+    data = await request.form()
+    if item and data:
+        item.name = data['name']
+        item.description = data['desc']
+        db.commit()
+        return RedirectResponse(url='/history', status_code=302)
+    else:
+        return {"message": "Item not found"}
+
+@app.get("/edit-his/{item_id}")
+async def edit_his(request: Request,item_id: int, db: Session = Depends(get_db)):
+    access_token = request.cookies.get("access_token")
+    logged_in=False
+    history_detail=None
+    value=None
+    if access_token:
+        decoded_token = jwt.decode(access_token.split("Bearer ")[1], PASSWORD, algorithms=["HS256"])
+        email = decoded_token.get("sub")
+        logged_in=True
+        history_detail = db.query(models.Sequences).filter(models.Sequences.id == item_id)
+        if history_detail[0].result:
+            value=history_detail[0].result.split(",")
+    reply={"request": request,"history":history_detail,"logged_in":logged_in,"value":value,"edit":True,"item_id":item_id}
+    print(reply,"line 304")
+    return templates.TemplateResponse("detail.html", reply)
 
 @app.get("/about")
 async def about(request: Request):
@@ -292,7 +327,7 @@ async def details(request: Request,user_id: int,  db: Session = Depends(get_db))
             history_detail = db.query(models.Sequences).filter(models.Sequences.id == user_id)
             if history_detail[0].result:
                 value=history_detail[0].result.split(",")
-        reply={"request": request,"history":history_detail,"logged_in":logged_in,"value":value}
+        reply={"request": request,"history":history_detail,"logged_in":logged_in,"value":value,"edit":False,"item_id":user_id}
         return templates.TemplateResponse("detail.html", reply)
     
 

@@ -11,3 +11,15 @@
     align-items: center;
 
 }
+
+textarea{
+    border-radius: 5px;
+}
+
+
+  /* Style table cells */
+th,td {
+    border: 1px thin #dddddd;
+    text-align: left;
+  }
+
