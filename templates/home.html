@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/static/css/home.css">
     <link rel="stylesheet" href="/static/css/main.css">
     <link rel="icon" href="/static/img/rna.png" type="image/icon type">
+    <link rel="stylesheet" href="/static/css/alert.css">
     <style>
         .text {
           display: flex;
@@ -84,12 +85,6 @@
         }
 
 
-      </style>
-        
-</head>
-<body>
-
-    <style>
         .noCssReinstallServiceWorker {
             margin-top: 1rem;
             padding: 1rem;
@@ -102,7 +97,7 @@
             font-family: 'Courier New', Courier, monospace;
             
         }
-
+        
         .noCssReinstallServiceWorker:hover {
             background: #d1d0c5;
             color: #333;
@@ -110,21 +105,39 @@
             -webkit-user-select: none;
             user-select: none
         }
-
+        
         .noCssReinstallServiceWorker:active {
             background: #646669
         }
-
-
+        
+        
         .noCssReinstallServiceWorker .check{
           color: #d1d0c5; text-decoration: none;
         }
-
+        
         /* .noCssReinstallServiceWorker .check:hover{
           color: #0000; text-decoration: none;
         } */
+      </style>
+        
+</head>
+<body>
 
-    </style>
+
+  {% for e in error %}
+  <label class="error_box">
+      <input type="checkbox" class="alertCheckbox" autocomplete="off" />
+      <div class="alert error">
+          <span class="alertClose">
+              <!-- <box-icon name='info-circle' animation='tada'  ></box-icon> -->
+              <box-icon name='x-circle' type='solid' color='#ce0000' animation='tada'></box-icon>
+          </span>
+          <span class="alertText">
+              {{e}}
+              <br class="clear" /></span>
+      </div>
+  </label>
+  {% endfor %}
       
 <nav class="navbar">
   <div class="navbar-container container">
@@ -216,6 +229,9 @@
         lengthElement.textContent = value === '' ? '0' : value.trim().split(/\s+/).length;
         }
     </script>
+
+<img src="data:image/png;base64,{{ m }}" alt="Generated Image">
+<img src="data:image/png;base64,{{ m }}" alt="Graph">
 
     
     <footer>
