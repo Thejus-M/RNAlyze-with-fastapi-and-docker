@@ -221,12 +221,14 @@ async def get_result(request: Request, db: Session = Depends(get_db)):
     value = data.get("rna")
     if not value:
         return RedirectResponse(url="/", status_code=303)
+    value = value.replace(" ", "").replace("\t", "").replace("\n", "")
+    value = "".join(value.splitlines())
     if value:
         set_value = set(value)
         rna_seq_poss = {'A','T','G','C'}
         for s in set_value:
             if s not in rna_seq_poss:
-                return templates.TemplateResponse("home.html", {"request": request,"error": "Should only use A,C,T,G"})
+                return templates.TemplateResponse("home.html", {"request": request,"error": ["Not a RNA,try removing all characters other then A,C,T,G"]})
     decoded_token=None
     email=None
     logged_in=False
