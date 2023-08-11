@@ -137,6 +137,18 @@
 
 <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+<script>
+    let container = document.getElementById('container')
+
+    toggle = () => {
+        container.classList.toggle('sign-in')
+        container.classList.toggle('sign-up')
+    }
+
+    setTimeout(() => {
+        container.classList.add('sign-in')
+    }, 200)
+</script>
 </body>
 </html>
 
