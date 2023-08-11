@@ -149,7 +149,7 @@
                 <div class="value">
         
                     <h3>The Sequences is a
-                        {% if result.0 == 0 %}
+                        {% if result.0 == 0 or result.0 == '0' %}
                         Non coding RNA ({{result.0}})
                         {% else %}
                         Coding RNA ({{result.0}})
