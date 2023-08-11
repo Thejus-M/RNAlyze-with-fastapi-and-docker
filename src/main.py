@@ -2,7 +2,7 @@ import os
 import pickle
 import string
 import bcrypt
-
+from .passwords import site_key,cache_key
 from fastapi.responses import HTMLResponse
 from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse
@@ -18,7 +18,7 @@ from .features import calculate_features
 
 models.Base.metadata.create_all(bind=engine)
 
-PASSWORD = "c716d7f65958fc43f32642b3f42b761de6"
+
 app = FastAPI()
 
 templates = Jinja2Templates(directory="templates")
@@ -37,7 +37,7 @@ def get_db():
 def logged_in(request):
     access_token = request.cookies.get("access_token")
     if access_token:
-            decoded_token = jwt.decode(access_token.split("Bearer ")[1],PASSWORD, algorithms=["HS256"])
+            decoded_token = jwt.decode(access_token.split("Bearer ")[1],cache_key, algorithms=["HS256"])
             email = decoded_token.get("sub")
             return True if email else False
     return False
@@ -76,11 +76,11 @@ async def register(request: Request, response: Response, db: Session = Depends(g
                 password = data.get("password")
                 if bcrypt.checkpw(password.encode(), user.hashed_password):
                     data = {"sub": login_email}
-                    jwt_token = jwt.encode(data, PASSWORD, algorithm="HS256")
+                    jwt_token = jwt.encode(data, cache_key, algorithm="HS256")
 
                     rna_results = request.cookies.get(f"rna_result")
                     if rna_results:
-                        decode_result = jwt.decode(rna_results.split("Bearer ")[1], PASSWORD, algorithms=["HS256"])
+                        decode_result = jwt.decode(rna_results.split("Bearer ")[1], cache_key, algorithms=["HS256"])
                         seq = decode_result["seq"]
                         result = decode_result["result"]
                         f = decode_result["features"]
@@ -122,7 +122,7 @@ async def register(request: Request, response: Response, db: Session = Depends(g
 async def login(request: Request):
     if logged_in(request):
         return RedirectResponse(url="/", status_code=303)
-    reply={"request":request}
+    reply={"request":request,'key':site_key}
     return templates.TemplateResponse("login.html",reply)
 
 
@@ -143,7 +143,7 @@ async def cache_data(request: Request):
     print(seq,result,features,"line 133")
 
     data = {"seq" : seq,"result":result[1],"features" : features,"logged_in":False}
-    jwt_token = jwt.encode(data, PASSWORD, algorithm="HS256")
+    jwt_token = jwt.encode(data, cache_key, algorithm="HS256")
     response = RedirectResponse(url="/login", status_code=303)
     response.set_cookie(key="rna_result", value=f"Bearer {jwt_token}", httponly=True)
     
@@ -158,7 +158,7 @@ async def save(request:Request):
     access_token = request.cookies.get("access_token")
     logged_in=False
     if access_token:
-        decoded_token = jwt.decode(access_token.split("Bearer ")[1],PASSWORD, algorithms=["HS256"])
+        decoded_token = jwt.decode(access_token.split("Bearer ")[1],cache_key, algorithms=["HS256"])
         email = decoded_token.get("sub")
         logged_in=True
     data = await request.form()
@@ -177,7 +177,7 @@ async def save(request:Request):
 async def add_db(request: Request, db: Session = Depends(get_db)): 
     access_token = request.cookies.get("access_token")
     if access_token:
-        decoded_token = jwt.decode(access_token.split("Bearer ")[1],PASSWORD, algorithms=["HS256"])
+        decoded_token = jwt.decode(access_token.split("Bearer ")[1],cache_key, algorithms=["HS256"])
         email = decoded_token.get("sub")
     if not decoded_token:
         return RedirectResponse(url="/", status_code=303)
@@ -234,7 +234,7 @@ async def get_result(request: Request, db: Session = Depends(get_db)):
     logged_in=False
     access_token = request.cookies.get("access_token")
     if access_token:
-        decoded_token = jwt.decode(access_token.split("Bearer ")[1],PASSWORD, algorithms=["HS256"])
+        decoded_token = jwt.decode(access_token.split("Bearer ")[1],cache_key, algorithms=["HS256"])
         email = decoded_token.get("sub")
         logged_in=True
     if value:
@@ -258,7 +258,7 @@ async def index(request: Request):
         access_token = request.cookies.get("access_token")
         logged_in=False
         if access_token:
-            decoded_token = jwt.decode(access_token.split("Bearer ")[1],PASSWORD, algorithms=["HS256"])
+            decoded_token = jwt.decode(access_token.split("Bearer ")[1],cache_key, algorithms=["HS256"])
             email = decoded_token.get("sub")
             logged_in=True
         reply={"request": request,"logged_in":logged_in}
@@ -301,7 +301,7 @@ async def edit_his(request: Request,item_id: int, db: Session = Depends(get_db))
     history_detail=None
     value=None
     if access_token:
-        decoded_token = jwt.decode(access_token.split("Bearer ")[1], PASSWORD, algorithms=["HS256"])
+        decoded_token = jwt.decode(access_token.split("Bearer ")[1], cache_key, algorithms=["HS256"])
         email = decoded_token.get("sub")
         logged_in=True
         history_detail = db.query(models.Sequences).filter(models.Sequences.id == item_id)
@@ -323,7 +323,7 @@ async def details(request: Request,user_id: int,  db: Session = Depends(get_db))
         history_detail=None
         value=None
         if access_token:
-            decoded_token = jwt.decode(access_token.split("Bearer ")[1], PASSWORD, algorithms=["HS256"])
+            decoded_token = jwt.decode(access_token.split("Bearer ")[1], cache_key, algorithms=["HS256"])
             email = decoded_token.get("sub")
             logged_in=True
             history_detail = db.query(models.Sequences).filter(models.Sequences.id == user_id)
@@ -339,7 +339,7 @@ async def his(request: Request, db: Session = Depends(get_db)):
         history=None
         logged_in=False
         if access_token:
-            decoded_token = jwt.decode(access_token.split("Bearer ")[1], PASSWORD, algorithms=["HS256"])
+            decoded_token = jwt.decode(access_token.split("Bearer ")[1], cache_key, algorithms=["HS256"])
             email = decoded_token.get("sub")
             history = db.query(models.Sequences).filter(models.Sequences.owner_id == email)
             logged_in=True
@@ -352,7 +352,7 @@ async def history(request: Request, db: Session = Depends(get_db)):
         history=None
         logged_in=False
         if access_token:
-            decoded_token = jwt.decode(access_token.split("Bearer ")[1], PASSWORD, algorithms=["HS256"])
+            decoded_token = jwt.decode(access_token.split("Bearer ")[1], cache_key, algorithms=["HS256"])
             email = decoded_token.get("sub")
             history = db.query(models.Sequences).filter(models.Sequences.owner_id == email)
             logged_in=True
