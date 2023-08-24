@@ -30,7 +30,7 @@ This repository contains the code and data for a project aimed at finding whethe
 -  CpG Islands
 -  Instability Index
 -  Fickett Score
--  Gravy
+-  Gravy Score
 
 # Dataset 📊
 
