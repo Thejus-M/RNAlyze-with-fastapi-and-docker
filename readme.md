@@ -76,6 +76,7 @@ To run the code in the provided repository, there are two methods: using Docker 
 	```
  	docker run --name server -p 8080:80 iamfoss/rnalyze-server:v1.5.2
 	```
+ Now just visit http://localhost:8080/
 
 #### From source
 
