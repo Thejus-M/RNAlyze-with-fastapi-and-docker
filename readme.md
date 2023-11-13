@@ -1,4 +1,4 @@
-# RNAlyse: A   Machine Learning Based Approch for RNA Sequence Analysis and Classification 🧬 🧪 💻
+# RNAlyse: A   Machine Learning Based Approach for RNA Sequence Analysis and Classification 🧬 🧪 💻
 
 This repository contains the code and data for a project aimed at finding whether a given DNA sequence is coding RNA or non-coding RNA using machine learning models. The project uses various features of the DNA sequence to train the models. 
 
