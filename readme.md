@@ -2,16 +2,7 @@
 
 This repository contains the code and data for a project aimed at finding whether a given DNA sequence is coding RNA or non-coding RNA using machine learning models. The project uses various features of the DNA sequence to train the models. 
 
-# TODO
 
-- [x] Create Login and Signup
-- [x] Create Database for storing inputed value
-- [ ] Create API calls
-- [ ] Display graphs for each input
-- [x] Show history
-- [ ] upload fasta file option
-- [ ] Create local caches
-- [ ] create copy button for the seq in details
 
 # Features 🔍
 -  ORF length
